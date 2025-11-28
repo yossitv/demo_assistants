@@ -1,0 +1,2479 @@
+{
+ "Description": "RAG Chat Backend MVP - Serverless API with DynamoDB, Qdrant, and OpenAI",
+ "Resources": {
+  "AgentsTable78E0948F": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "tenantId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "agentId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "tenantId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "agentId",
+      "KeyType": "RANGE"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentsTable/Resource"
+   }
+  },
+  "KnowledgeSpacesTable2841007C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "tenantId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "knowledgeSpaceId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "tenantId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "knowledgeSpaceId",
+      "KeyType": "RANGE"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeSpacesTable/Resource"
+   }
+  },
+  "ConversationsTableCD91EB96": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "conversationId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "conversationId",
+      "KeyType": "HASH"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ConversationsTable/Resource"
+   }
+  },
+  "LambdaExecutionRoleD5C26073": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/LambdaExecutionRole/Resource"
+   }
+  },
+  "LambdaExecutionRoleDefaultPolicy6D69732F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AgentsTable78E0948F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "ConversationsTableCD91EB96",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "KnowledgeSpacesTable2841007C",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "Roles": [
+     {
+      "Ref": "LambdaExecutionRoleD5C26073"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/LambdaExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "KnowledgeCreateFunction00DF9D29": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/knowledgeCreate.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeCreateFunction/Resource",
+    "aws:asset:path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "KnowledgeListFunction8010F62A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/knowledgeList.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeListFunction/Resource",
+    "aws:asset:path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AgentCreateFunction5778DBD9": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/agentCreate.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentCreateFunction/Resource",
+    "aws:asset:path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChatFunction3D7C447E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/chat.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ChatFunction/Resource",
+    "aws:asset:path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiKeyAuthorizerRoleE2DD8BB5": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiKeyAuthorizerRole/Resource"
+   }
+  },
+  "ApiKeyAuthorizerFunction06E0AA09": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/apiKeyAuthorizer.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiKeyAuthorizerRoleE2DD8BB5",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 5
+   },
+   "DependsOn": [
+    "ApiKeyAuthorizerRoleE2DD8BB5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiKeyAuthorizerFunction/Resource",
+    "aws:asset:path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiKeyAuthorizerFunctionRagChatBackendStackApiKeyAuthorizer4973A63CPermissions64B8824E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiKeyAuthorizerFunction06E0AA09",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/authorizers/",
+       {
+        "Ref": "ApiKeyAuthorizerD0BEAC37"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiKeyAuthorizerFunction/RagChatBackendStackApiKeyAuthorizer4973A63C:Permissions"
+   }
+  },
+  "UserPool6BA7E5F2": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": true
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false,
+      "RequireUppercase": true
+     }
+    },
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     },
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "tenant_id",
+      "StringAttributeConstraints": {
+       "MaxLength": "256",
+       "MinLength": "1"
+      }
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "rag-chat-backend-users",
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/UserPool/Resource"
+   }
+  },
+  "UserPoolWebClient4C9370B0": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/UserPool/WebClient/Resource"
+   }
+  },
+  "ApiAccessLogsE9DF007D": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiAccessLogs/Resource"
+   }
+  },
+  "RagChatApi99D73E1D": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "ApiKeySourceType": "AUTHORIZER",
+    "Description": "OpenAI-compatible RAG chat API with knowledge management",
+    "Name": "RAG Chat Backend API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Resource"
+   }
+  },
+  "RagChatApiDeployment439075414dcf88b11f6322966bf0d778ca0e7f1c": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "OpenAI-compatible RAG chat API with knowledge management",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "DependsOn": [
+    "ApiKeyAuthorizerD0BEAC37",
+    "Default4xxWithCorsCDE35159",
+    "Default5xxWithCorsE5B3F200",
+    "RagChatApiOPTIONS861A0413",
+    "RagChatApiv1agentcreateOPTIONSD3F5C9A0",
+    "RagChatApiv1agentcreatePOST7B6F2AE8",
+    "RagChatApiv1agentcreateCBB8B104",
+    "RagChatApiv1agentOPTIONS1E1EC60B",
+    "RagChatApiv1agentBA0284CC",
+    "RagChatApiv1chatcompletionsOPTIONS2669661D",
+    "RagChatApiv1chatcompletionsPOSTBC1B3D12",
+    "RagChatApiv1chatcompletions2BA80AD2",
+    "RagChatApiv1chatOPTIONS0E89589C",
+    "RagChatApiv1chat82090A87",
+    "RagChatApiv1knowledgecreateOPTIONS0CFB9B91",
+    "RagChatApiv1knowledgecreatePOSTFD76AEF7",
+    "RagChatApiv1knowledgecreate37D4EE34",
+    "RagChatApiv1knowledgelistGET13A5C3C1",
+    "RagChatApiv1knowledgelistOPTIONSE26E4072",
+    "RagChatApiv1knowledgelist5D80CABD",
+    "RagChatApiv1knowledgeOPTIONS501CA93C",
+    "RagChatApiv1knowledge7A457B61",
+    "RagChatApiv1OPTIONS685FADF2",
+    "RagChatApiv1BA6F891C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "RagChatApiDeploymentStageprod22B9D76E": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "ApiAccessLogsE9DF007D",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"userAgent\":\"$context.identity.userAgent\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\",\"error\":\"$context.error.message\",\"integrationStatus\":\"$context.integrationStatus\",\"apiId\":\"$context.apiId\",\"authorizer\":\"$context.authorizer.principalId\"}"
+    },
+    "DeploymentId": {
+     "Ref": "RagChatApiDeployment439075414dcf88b11f6322966bf0d778ca0e7f1c"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "LoggingLevel": "INFO",
+      "MetricsEnabled": true,
+      "ResourcePath": "/*"
+     }
+    ],
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "RagChatApiOPTIONS861A0413": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "RagChatApi99D73E1D",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1BA6F891C": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "RagChatApi99D73E1D",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "v1",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/Resource"
+   }
+  },
+  "RagChatApiv1OPTIONS685FADF2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1BA6F891C"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1knowledge7A457B61": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1BA6F891C"
+    },
+    "PathPart": "knowledge",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/Resource"
+   }
+  },
+  "RagChatApiv1knowledgeOPTIONS501CA93C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1knowledge7A457B61"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1knowledgecreate37D4EE34": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1knowledge7A457B61"
+    },
+    "PathPart": "create",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/create/Resource"
+   }
+  },
+  "RagChatApiv1knowledgecreateOPTIONS0CFB9B91": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1knowledgecreate37D4EE34"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/create/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1knowledgecreatePOSTApiPermissionRagChatBackendStackRagChatApi48858D08POSTv1knowledgecreateB140BF38": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KnowledgeCreateFunction00DF9D29",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/",
+       {
+        "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+       },
+       "/POST/v1/knowledge/create"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/create/POST/ApiPermission.RagChatBackendStackRagChatApi48858D08.POST..v1.knowledge.create"
+   }
+  },
+  "RagChatApiv1knowledgecreatePOSTApiPermissionTestRagChatBackendStackRagChatApi48858D08POSTv1knowledgecreateBBBB47AC": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KnowledgeCreateFunction00DF9D29",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/test-invoke-stage/POST/v1/knowledge/create"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/create/POST/ApiPermission.Test.RagChatBackendStackRagChatApi48858D08.POST..v1.knowledge.create"
+   }
+  },
+  "RagChatApiv1knowledgecreatePOSTFD76AEF7": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "CUSTOM",
+    "AuthorizerId": {
+     "Ref": "ApiKeyAuthorizerD0BEAC37"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "KnowledgeCreateFunction00DF9D29",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RagChatApiv1knowledgecreate37D4EE34"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/create/POST/Resource"
+   }
+  },
+  "RagChatApiv1knowledgelist5D80CABD": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1knowledge7A457B61"
+    },
+    "PathPart": "list",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/list/Resource"
+   }
+  },
+  "RagChatApiv1knowledgelistOPTIONSE26E4072": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1knowledgelist5D80CABD"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/list/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1knowledgelistGETApiPermissionRagChatBackendStackRagChatApi48858D08GETv1knowledgelist4D702BA7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KnowledgeListFunction8010F62A",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/",
+       {
+        "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+       },
+       "/GET/v1/knowledge/list"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/list/GET/ApiPermission.RagChatBackendStackRagChatApi48858D08.GET..v1.knowledge.list"
+   }
+  },
+  "RagChatApiv1knowledgelistGETApiPermissionTestRagChatBackendStackRagChatApi48858D08GETv1knowledgelist49997B07": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KnowledgeListFunction8010F62A",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/test-invoke-stage/GET/v1/knowledge/list"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/list/GET/ApiPermission.Test.RagChatBackendStackRagChatApi48858D08.GET..v1.knowledge.list"
+   }
+  },
+  "RagChatApiv1knowledgelistGET13A5C3C1": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "CUSTOM",
+    "AuthorizerId": {
+     "Ref": "ApiKeyAuthorizerD0BEAC37"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "KnowledgeListFunction8010F62A",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RagChatApiv1knowledgelist5D80CABD"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/knowledge/list/GET/Resource"
+   }
+  },
+  "RagChatApiv1agentBA0284CC": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1BA6F891C"
+    },
+    "PathPart": "agent",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/Resource"
+   }
+  },
+  "RagChatApiv1agentOPTIONS1E1EC60B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1agentBA0284CC"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1agentcreateCBB8B104": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1agentBA0284CC"
+    },
+    "PathPart": "create",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/create/Resource"
+   }
+  },
+  "RagChatApiv1agentcreateOPTIONSD3F5C9A0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1agentcreateCBB8B104"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/create/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1agentcreatePOSTApiPermissionRagChatBackendStackRagChatApi48858D08POSTv1agentcreate01DFAF26": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AgentCreateFunction5778DBD9",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/",
+       {
+        "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+       },
+       "/POST/v1/agent/create"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/create/POST/ApiPermission.RagChatBackendStackRagChatApi48858D08.POST..v1.agent.create"
+   }
+  },
+  "RagChatApiv1agentcreatePOSTApiPermissionTestRagChatBackendStackRagChatApi48858D08POSTv1agentcreate976409E0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AgentCreateFunction5778DBD9",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/test-invoke-stage/POST/v1/agent/create"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/create/POST/ApiPermission.Test.RagChatBackendStackRagChatApi48858D08.POST..v1.agent.create"
+   }
+  },
+  "RagChatApiv1agentcreatePOST7B6F2AE8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "CUSTOM",
+    "AuthorizerId": {
+     "Ref": "ApiKeyAuthorizerD0BEAC37"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AgentCreateFunction5778DBD9",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RagChatApiv1agentcreateCBB8B104"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/agent/create/POST/Resource"
+   }
+  },
+  "RagChatApiv1chat82090A87": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1BA6F891C"
+    },
+    "PathPart": "chat",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/Resource"
+   }
+  },
+  "RagChatApiv1chatOPTIONS0E89589C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1chat82090A87"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1chatcompletions2BA80AD2": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RagChatApiv1chat82090A87"
+    },
+    "PathPart": "completions",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/completions/Resource"
+   }
+  },
+  "RagChatApiv1chatcompletionsOPTIONS2669661D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,x-api-key,X-API-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RagChatApiv1chatcompletions2BA80AD2"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/completions/OPTIONS/Resource"
+   }
+  },
+  "RagChatApiv1chatcompletionsPOSTApiPermissionRagChatBackendStackRagChatApi48858D08POSTv1chatcompletions0E45EF40": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChatFunction3D7C447E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/",
+       {
+        "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+       },
+       "/POST/v1/chat/completions"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/completions/POST/ApiPermission.RagChatBackendStackRagChatApi48858D08.POST..v1.chat.completions"
+   }
+  },
+  "RagChatApiv1chatcompletionsPOSTApiPermissionTestRagChatBackendStackRagChatApi48858D08POSTv1chatcompletions8718678B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChatFunction3D7C447E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:381492091301:",
+       {
+        "Ref": "RagChatApi99D73E1D"
+       },
+       "/test-invoke-stage/POST/v1/chat/completions"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/completions/POST/ApiPermission.Test.RagChatBackendStackRagChatApi48858D08.POST..v1.chat.completions"
+   }
+  },
+  "RagChatApiv1chatcompletionsPOSTBC1B3D12": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "CUSTOM",
+    "AuthorizerId": {
+     "Ref": "ApiKeyAuthorizerD0BEAC37"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChatFunction3D7C447E",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RagChatApiv1chatcompletions2BA80AD2"
+    },
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/Default/v1/chat/completions/POST/Resource"
+   }
+  },
+  "RagChatApiTavusApiKeyD046BF60": {
+   "Type": "AWS::ApiGateway::ApiKey",
+   "Properties": {
+    "Description": "API Key for Tavus custom LLM integration",
+    "Enabled": true,
+    "Name": "tavus-llm-key",
+    "StageKeys": [
+     {
+      "RestApiId": {
+       "Ref": "RagChatApi99D73E1D"
+      },
+      "StageName": {
+       "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+      }
+     }
+    ],
+    "Value": "example-test-api-key-12345"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/TavusApiKey/Resource"
+   }
+  },
+  "RagChatApiTavusUsagePlan9A5392AD": {
+   "Type": "AWS::ApiGateway::UsagePlan",
+   "Properties": {
+    "ApiStages": [
+     {
+      "ApiId": {
+       "Ref": "RagChatApi99D73E1D"
+      },
+      "Stage": {
+       "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+      },
+      "Throttle": {}
+     }
+    ],
+    "Description": "Usage plan for Tavus API key access",
+    "UsagePlanName": "Tavus LLM Usage Plan"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/TavusUsagePlan/Resource"
+   }
+  },
+  "RagChatApiTavusUsagePlanUsagePlanKeyResourceRagChatBackendStackRagChatApiTavusApiKey33758B3DECFA2FA6": {
+   "Type": "AWS::ApiGateway::UsagePlanKey",
+   "Properties": {
+    "KeyId": {
+     "Ref": "RagChatApiTavusApiKeyD046BF60"
+    },
+    "KeyType": "API_KEY",
+    "UsagePlanId": {
+     "Ref": "RagChatApiTavusUsagePlan9A5392AD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/RagChatApi/TavusUsagePlan/UsagePlanKeyResource:RagChatBackendStackRagChatApiTavusApiKey33758B3D"
+   }
+  },
+  "Default4xxWithCorsCDE35159": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Methods": "'*'"
+    },
+    "ResponseType": "DEFAULT_4XX",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/Default4xxWithCors/Resource"
+   }
+  },
+  "Default5xxWithCorsE5B3F200": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Methods": "'*'"
+    },
+    "ResponseType": "DEFAULT_5XX",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/Default5xxWithCors/Resource"
+   }
+  },
+  "ApiKeyAuthorizerD0BEAC37": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "AuthorizerResultTtlInSeconds": 0,
+    "AuthorizerUri": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           ":",
+           {
+            "Fn::GetAtt": [
+             "ApiKeyAuthorizerFunction06E0AA09",
+             "Arn"
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       ":apigateway:",
+       {
+        "Fn::Select": [
+         3,
+         {
+          "Fn::Split": [
+           ":",
+           {
+            "Fn::GetAtt": [
+             "ApiKeyAuthorizerFunction06E0AA09",
+             "Arn"
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       ":lambda:path/2015-03-31/functions/",
+       {
+        "Fn::GetAtt": [
+         "ApiKeyAuthorizerFunction06E0AA09",
+         "Arn"
+        ]
+       },
+       "/invocations"
+      ]
+     ]
+    },
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "RagChatBackendStackApiKeyAuthorizer4973A63C",
+    "RestApiId": {
+     "Ref": "RagChatApi99D73E1D"
+    },
+    "Type": "REQUEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiKeyAuthorizer/Resource"
+   }
+  },
+  "KnowledgeCreateFunctionErrorRateAlarmDC375E55": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Lambda error rate exceeded 5% for KnowledgeCreateFunction",
+    "AlarmName": "KnowledgeCreateFunction-ErrorRate-High",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "Metrics": [
+     {
+      "Expression": "IF(invocations > 0, (errors / invocations) * 100, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "KnowledgeCreateFunction00DF9D29"
+          }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "KnowledgeCreateFunction00DF9D29"
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     }
+    ],
+    "Threshold": 5,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeCreateFunctionErrorRateAlarm/Resource"
+   }
+  },
+  "KnowledgeListFunctionErrorRateAlarm709A72D0": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Lambda error rate exceeded 5% for KnowledgeListFunction",
+    "AlarmName": "KnowledgeListFunction-ErrorRate-High",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "Metrics": [
+     {
+      "Expression": "IF(invocations > 0, (errors / invocations) * 100, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "KnowledgeListFunction8010F62A"
+          }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "KnowledgeListFunction8010F62A"
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     }
+    ],
+    "Threshold": 5,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeListFunctionErrorRateAlarm/Resource"
+   }
+  },
+  "AgentCreateFunctionErrorRateAlarmFA95C443": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Lambda error rate exceeded 5% for AgentCreateFunction",
+    "AlarmName": "AgentCreateFunction-ErrorRate-High",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "Metrics": [
+     {
+      "Expression": "IF(invocations > 0, (errors / invocations) * 100, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "AgentCreateFunction5778DBD9"
+          }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "AgentCreateFunction5778DBD9"
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     }
+    ],
+    "Threshold": 5,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentCreateFunctionErrorRateAlarm/Resource"
+   }
+  },
+  "ChatFunctionErrorRateAlarmAF96720C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Lambda error rate exceeded 5% for ChatFunction",
+    "AlarmName": "ChatFunction-ErrorRate-High",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "Metrics": [
+     {
+      "Expression": "IF(invocations > 0, (errors / invocations) * 100, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "ChatFunction3D7C447E"
+          }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Ref": "ChatFunction3D7C447E"
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     }
+    ],
+    "Threshold": 5,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ChatFunctionErrorRateAlarm/Resource"
+   }
+  },
+  "ApiGateway5xxErrorRateAlarmE44311EF": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "API Gateway 5xx error rate exceeded 1%",
+    "AlarmName": "ApiGateway-5xxErrorRate-High",
+    "ComparisonOperator": "GreaterThanThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "Metrics": [
+     {
+      "Expression": "IF(requests > 0, (errors / requests) * 100, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "ApiName",
+          "Value": "RAG Chat Backend API"
+         }
+        ],
+        "MetricName": "5XXError",
+        "Namespace": "AWS/ApiGateway"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "requests",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "ApiName",
+          "Value": "RAG Chat Backend API"
+         }
+        ],
+        "MetricName": "Count",
+        "Namespace": "AWS/ApiGateway"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     }
+    ],
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ApiGateway5xxErrorRateAlarm/Resource"
+   }
+  },
+  "AgentsTableReadThrottleAlarmD240EE2C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB read throttling detected on AgentsTable",
+    "AlarmName": "AgentsTable-ReadThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "GetItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "AgentsTable78E0948F"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentsTableReadThrottleAlarm/Resource"
+   }
+  },
+  "AgentsTableWriteThrottleAlarmF7C3B4E3": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB write throttling detected on AgentsTable",
+    "AlarmName": "AgentsTable-WriteThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "PutItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "AgentsTable78E0948F"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentsTableWriteThrottleAlarm/Resource"
+   }
+  },
+  "AgentsTableQueryThrottleAlarm5BC5E09C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB query throttling detected on AgentsTable",
+    "AlarmName": "AgentsTable-QueryThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "Query"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "AgentsTable78E0948F"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/AgentsTableQueryThrottleAlarm/Resource"
+   }
+  },
+  "KnowledgeSpacesTableReadThrottleAlarm94537667": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB read throttling detected on KnowledgeSpacesTable",
+    "AlarmName": "KnowledgeSpacesTable-ReadThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "GetItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeSpacesTableReadThrottleAlarm/Resource"
+   }
+  },
+  "KnowledgeSpacesTableWriteThrottleAlarm2C2250B9": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB write throttling detected on KnowledgeSpacesTable",
+    "AlarmName": "KnowledgeSpacesTable-WriteThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "PutItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeSpacesTableWriteThrottleAlarm/Resource"
+   }
+  },
+  "KnowledgeSpacesTableQueryThrottleAlarm738D859C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB query throttling detected on KnowledgeSpacesTable",
+    "AlarmName": "KnowledgeSpacesTable-QueryThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "Query"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/KnowledgeSpacesTableQueryThrottleAlarm/Resource"
+   }
+  },
+  "ConversationsTableReadThrottleAlarm50707722": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB read throttling detected on ConversationsTable",
+    "AlarmName": "ConversationsTable-ReadThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "GetItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "ConversationsTableCD91EB96"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ConversationsTableReadThrottleAlarm/Resource"
+   }
+  },
+  "ConversationsTableWriteThrottleAlarm0555A089": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB write throttling detected on ConversationsTable",
+    "AlarmName": "ConversationsTable-WriteThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "PutItem"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "ConversationsTableCD91EB96"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ConversationsTableWriteThrottleAlarm/Resource"
+   }
+  },
+  "ConversationsTableQueryThrottleAlarmA03BFE0C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "DynamoDB query throttling detected on ConversationsTable",
+    "AlarmName": "ConversationsTable-QueryThrottling",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "Operation",
+      "Value": "Query"
+     },
+     {
+      "Name": "TableName",
+      "Value": {
+       "Ref": "ConversationsTableCD91EB96"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ConversationsTableQueryThrottleAlarm/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22RwW7CMAyGn4V7yFjRHgCYxmGbhso4I5N6JZDGXZ0MsSjvPiUtDE07+bN/x/GfFLKYTuRkBCceq+o4Nnonw9qBOgo48TZUZwsNVTsZ3mFnUCw+bIYoNDQylNTXclyR0eqc0p6iMNDsKpDhyVvlNNmk3fIKu0Yza7JR8HQLzOhYzlIQPJVzr47o5sAoFNVWO5Jhw9itiEw6fuULLIxG626lvhKFoZpleKF62ZFvU8eFo4BW1+DwBGcZSmQ3a3X2NOAjtobOzTD4Jls7qLP7Hkpk8p3CvO8ruj1VSRzoog6Te561+hnziw20YahxZcD2Hv5LUtuyX7dEbslynvm3VOKnTwa821Onv7HLt1yzKJQhX53Aqb0MMwNdkxsSxPi7bf6L5E/bOjW8edd6F4WlCuWB776KB1nI+9GBtR533jrdoCz7+AONXa2YXAIAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "UserPoolId": {
+   "Description": "Cognito User Pool ID",
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   }
+  },
+  "UserPoolClientId": {
+   "Description": "Cognito User Pool Client ID",
+   "Value": {
+    "Ref": "UserPoolWebClient4C9370B0"
+   }
+  },
+  "RagChatApiEndpoint2203855D": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "RagChatApi99D73E1D"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "API Gateway URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "RagChatApi99D73E1D"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "RagChatApiDeploymentStageprod22B9D76E"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "AgentsTableName": {
+   "Description": "DynamoDB Agents Table Name",
+   "Value": {
+    "Ref": "AgentsTable78E0948F"
+   }
+  },
+  "KnowledgeSpacesTableName": {
+   "Description": "DynamoDB KnowledgeSpaces Table Name",
+   "Value": {
+    "Ref": "KnowledgeSpacesTable2841007C"
+   }
+  },
+  "ConversationsTableName": {
+   "Description": "DynamoDB Conversations Table Name",
+   "Value": {
+    "Ref": "ConversationsTableCD91EB96"
+   }
+  },
+  "TavusApiKeyValue": {
+   "Description": "API Key value for Tavus LLM access (from TEST_API_KEY env var)",
+   "Value": "example-test-api-key-12345"
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,36 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc": {
+      "displayName": "KnowledgeCreateFunction/Code",
+      "source": {
+        "path": "asset.7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "381492091301-us-east-1-38e6af66": {
+          "bucketName": "cdk-hnb659fds-assets-381492091301-us-east-1",
+          "objectKey": "7e67b95403357bd513ba64d4aedc9671eae6b0a335358083c184d398b2c0ffcc.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-file-publishing-role-381492091301-us-east-1"
+        }
+      }
+    },
+    "4fccd4ddedeedfb9a8c11f10dce5e56086ed2fbe29f23d09b2924494241e63d8": {
+      "displayName": "RagChatBackendStack Template",
+      "source": {
+        "path": "RagChatBackendStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "381492091301-us-east-1-9386bf69": {
+          "bucketName": "cdk-hnb659fds-assets-381492091301-us-east-1",
+          "objectKey": "4fccd4ddedeedfb9a8c11f10dce5e56086ed2fbe29f23d09b2924494241e63d8.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-file-publishing-role-381492091301-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
