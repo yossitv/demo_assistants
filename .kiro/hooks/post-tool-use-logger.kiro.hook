@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Post Tool Use Logger",
+  "description": "Logs task completion events to a JSONL file after every tool execution, capturing agent_id, tool_name, tool_input, tool_response, and timestamp for later analysis",
+  "version": "1",
+  "when": {
+    "type": "agentEnd"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "#!/bin/bash\n# Extract environment variables\nAGENT_ID=\"${AGENT_ID:-unknown}\"\nLOG_DIR=\"${LOG_DIR:-.}\"\n\n# Create log directory if it doesn't exist\nmkdir -p \"$LOG_DIR\"\n\n# Get timestamp in ISO8601 format\nTIMESTAMP=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\n\n# Extract tool information from environment or stdin\n# These would typically be passed as environment variables by the system\nTOOL_NAME=\"${TOOL_NAME:-unknown}\"\nTOOL_INPUT=\"${TOOL_INPUT:-{}}\"\nTOOL_RESPONSE=\"${TOOL_RESPONSE:-{}}\"\n\n# Create JSONL entry\ncat << EOF >> \"$LOG_DIR/events.jsonl\"\n{\"timestamp\":\"$TIMESTAMP\",\"event\":\"task_end\",\"agent_id\":\"$AGENT_ID\",\"tool_name\":\"$TOOL_NAME\",\"tool_input\":$TOOL_INPUT,\"tool_response\":$TOOL_RESPONSE}\nEOF\n\n# Always exit 0 (tool already ran)\nexit 0"
+  }
+}

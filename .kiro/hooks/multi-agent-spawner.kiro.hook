@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Multi-Agent Environment Spawner",
+  "description": "Automatically constructs a multi-agent environment at agent startup using tmux-mcp.",
+  "version": "1",
+  "when": {
+    "type": "agentSpawn"
+  },
+  "then": {
+    "type": "exec",
+    "command": "./hooks/spawn_multi_agent.sh",
+    "args": [],
+    "timeout_ms": 60000
+  }
+}

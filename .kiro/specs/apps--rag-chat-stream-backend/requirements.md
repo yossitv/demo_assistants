@@ -47,7 +47,9 @@
 2. WHEN a client sends a request with an `Authorization` header that does not start with "Bearer ", THEN the System SHALL return HTTP 401 with a JSON error response
 3. WHEN a client sends a request with a Bearer token that does not match the configured `TAUVS_API_KEY`, THEN the System SHALL return HTTP 403 with a JSON error response
 4. WHEN the System validates the Bearer token, THEN the System SHALL retrieve the expected token from environment variables or secure storage
-5. WHEN the System logs authentication events, THEN the System SHALL NOT log the full Authorization header or token value
+5. WHEN the System checks the Authorization header, THEN the System SHALL check both `Authorization` and `authorization` header keys (case-insensitive handling)
+6. WHEN the System logs authentication events, THEN the System SHALL NOT log the full Authorization header or token value
+7. WHEN the System logs authentication events, THEN the System SHALL log only the token hash or first few characters if logging is necessary
 
 ### Requirement 3
 
@@ -153,3 +155,35 @@
 2. WHEN the System receives a request without a `stream` field, THEN the System SHALL return the same JSON response format as the existing sync implementation
 3. WHEN the System processes a non-streaming request, THEN the System SHALL use the same ChatWithAgentUseCase execution flow as the existing sync implementation
 4. WHEN the System processes a non-streaming request, THEN the System SHALL use the same error handling logic as the existing sync implementation
+
+### Requirement 11
+
+**User Story:** As a system operator, I want the Lambda function to have appropriate timeout and resource settings, so that streaming responses can be delivered reliably.
+
+#### Acceptance Criteria
+
+1. WHEN the System configures the Lambda function, THEN the System SHALL set the timeout to between 120 and 300 seconds
+2. WHEN the System sends all chunks, THEN the System SHALL call `responseStream.end()` to close the stream and prevent resource leaks
+3. WHEN the System completes ChatWithAgentUseCase execution, THEN the System SHALL send chunks promptly without infinite loops or blocking operations
+
+### Requirement 12
+
+**User Story:** As a system architect, I want the backend to ignore optional OpenAI parameters in this phase, so that implementation remains minimal while maintaining protocol compatibility.
+
+#### Acceptance Criteria
+
+1. WHEN the System receives a request with `temperature` field, THEN the System SHALL ignore the field and use fixed LLM service settings
+2. WHEN the System receives a request with `top_p` field, THEN the System SHALL ignore the field and use fixed LLM service settings
+3. WHEN the System receives a request with `frequency_penalty` field, THEN the System SHALL ignore the field and use fixed LLM service settings
+4. WHEN the System receives a request with `tools` field, THEN the System SHALL ignore the field in this phase
+5. WHEN the System receives a request with `tool_choice` field, THEN the System SHALL ignore the field in this phase
+6. WHEN the System receives a request with `extra_body` field, THEN the System SHALL ignore the field in this phase
+
+### Requirement 13
+
+**User Story:** As a system operator, I want the backend to handle CORS appropriately, so that web clients can access the streaming endpoint.
+
+#### Acceptance Criteria
+
+1. WHEN the System sends SSE responses, THEN the System SHALL include CORS headers according to existing CORS policy
+2. WHEN the System sends SSE responses and CORS is required, THEN the System SHALL include `Access-Control-Allow-Origin` header if configured
