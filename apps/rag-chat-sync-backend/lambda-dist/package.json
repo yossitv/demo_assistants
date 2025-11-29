@@ -1,7 +1,7 @@
 {
-  "name": "rag-chat-backend-mvp",
+  "name": "rag-chat-sync-backend",
   "version": "1.0.0",
-  "description": "MVP RAG chat backend with AWS CDK",
+  "description": "RAG Chat Sync Backend - OpenAI-compatible RAG chat API with synchronous response",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
