@@ -33,7 +33,7 @@ Create `.env` file:
 
 ```bash
 # Required
-TEST_API_KEY=your-api-key-min-20-chars
+RAG_STREAM_API_KEY=your-api-key-min-20-chars # also used as EXPECTED_API_KEY/TAUVS_API_KEY for bearer auth
 OPENAI_API_KEY=sk-...
 QDRANT_URL=https://your-qdrant-instance
 QDRANT_API_KEY=your-qdrant-key
@@ -53,6 +53,9 @@ npm run build
 
 ```bash
 npm test
+
+# Run in parallel if your environment has enough resources
+npm run test:parallel
 ```
 
 ### Deploy
@@ -143,7 +146,7 @@ npm test -- --watch
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `TEST_API_KEY` | API key for Bearer token authentication (min 20 chars) | Yes | - |
+| `RAG_STREAM_API_KEY` | API key for Bearer token authentication (min 20 chars). Also used as `EXPECTED_API_KEY` and `TAUVS_API_KEY` in the stack. | Yes | - |
 | `OPENAI_API_KEY` | OpenAI API key | Yes | - |
 | `QDRANT_URL` | Qdrant endpoint URL | Yes | - |
 | `QDRANT_API_KEY` | Qdrant API key | Yes | - |

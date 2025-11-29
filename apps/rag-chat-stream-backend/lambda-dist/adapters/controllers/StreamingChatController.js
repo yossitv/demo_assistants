@@ -6,7 +6,8 @@ const cors_1 = require("../../shared/cors");
 const errors_1 = require("../../shared/errors");
 const CloudWatchLogger_1 = require("../../infrastructure/services/CloudWatchLogger");
 const streaming_1 = require("../../shared/streaming");
-const apiKey_1 = require("../../shared/apiKey");
+const apiKeyCheck_1 = require("../../shared/apiKeyCheck");
+const jwtVerify_1 = require("../../shared/jwtVerify");
 class StreamingChatController {
     useCase;
     logger;
@@ -92,8 +93,8 @@ class StreamingChatController {
                 });
                 return (0, cors_1.errorResponse)(400, error.message);
             }
-            const tenantId = authContext?.tenantId || event.requestContext.authorizer?.claims?.['custom:tenant_id'];
-            const userId = authContext?.userId || event.requestContext.authorizer?.claims?.sub;
+            const tenantId = authContext?.tenantId;
+            const userId = authContext?.userId;
             const authMethod = authContext?.authMethod || 'none';
             if (this.structuredLogger && tenantId) {
                 this.structuredLogger.logErrorWithContext('Error in StreamingChatController', error, {
@@ -146,17 +147,7 @@ class StreamingChatController {
         throw new errors_1.ValidationError('stream must be a boolean');
     }
     extractAuthenticationContext(event) {
-        const headers = event.headers || {};
-        const authHeader = Object.entries(headers).find(([headerName]) => headerName.toLowerCase() === 'authorization')?.[1];
-        const bearerToken = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
-        if (bearerToken) {
-            const decodedClaims = this.decodeJwtWithoutVerification(bearerToken);
-            const tenantId = decodedClaims?.['custom:tenant_id'];
-            const userId = decodedClaims?.sub;
-            if (tenantId && userId) {
-                return { tenantId, userId, authMethod: 'jwt' };
-            }
-        }
+        // Check for custom authorizer context (API key authentication)
         const authorizerContext = event.requestContext.authorizer;
         if (authorizerContext?.tenantId && authorizerContext?.userId) {
             return {
@@ -165,18 +156,25 @@ class StreamingChatController {
                 authMethod: 'apikey'
             };
         }
-        const claims = authorizerContext?.claims;
-        const tenantId = claims?.['custom:tenant_id'];
-        const userId = claims?.sub;
-        if (tenantId && userId) {
-            return { tenantId, userId, authMethod: 'jwt' };
+        // Try JWT verification
+        const authHeader = Object.entries(event.headers || {}).find(([headerName]) => headerName.toLowerCase() === 'authorization')?.[1];
+        if (authHeader) {
+            const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+            const jwtResult = (0, jwtVerify_1.verifyJwt)(token, this.logger);
+            if (jwtResult.isValid && jwtResult.payload) {
+                return {
+                    tenantId: jwtResult.payload['custom:tenant_id'],
+                    userId: jwtResult.payload.sub,
+                    authMethod: 'jwt'
+                };
+            }
         }
-        const { apiKey } = (0, apiKey_1.extractApiKeyFromHeaders)(headers);
-        const expectedApiKey = process.env.TAVUS_API_KEY || process.env.TEST_API_KEY;
-        if (apiKey && (!expectedApiKey || apiKey === expectedApiKey)) {
+        // Try API key validation
+        const apiKeyResult = (0, apiKeyCheck_1.validateApiKey)(event.headers || {}, this.logger);
+        if (apiKeyResult.isValid && apiKeyResult.tenantId && apiKeyResult.userId) {
             return {
-                tenantId: 'default',
-                userId: 'default',
+                tenantId: apiKeyResult.tenantId,
+                userId: apiKeyResult.userId,
                 authMethod: 'apikey'
             };
         }
@@ -232,19 +230,6 @@ class StreamingChatController {
             path,
             reason: 'Missing authentication credentials'
         });
-    }
-    decodeJwtWithoutVerification(token) {
-        const parts = token.split('.');
-        if (parts.length < 2) {
-            return null;
-        }
-        try {
-            const payload = Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
-            return JSON.parse(payload);
-        }
-        catch {
-            return null;
-        }
     }
 }
 exports.StreamingChatController = StreamingChatController;

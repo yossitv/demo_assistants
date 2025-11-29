@@ -1,3 +1,4 @@
+import * as jwt from 'jsonwebtoken';
 import { ChatController } from './ChatController';
 import { APIGatewayProxyEvent } from '../../shared/types';
 
@@ -44,15 +45,58 @@ const createUseCase = () => {
 };
 
 describe('ChatController authentication', () => {
-  it('authenticates with JWT claims', async () => {
+  const originalEnv = process.env;
+  const testSecret = 'test-jwt-secret';
+
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    process.env.JWT_SECRET = testSecret;
+    process.env.EXPECTED_API_KEY = 'test-api-key';
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
+  });
+
+  it('authenticates with authorizer context (API key)', async () => {
     const useCase = createUseCase();
     const controller = new ChatController(useCase as any);
 
     const event = createEvent({
       requestContext: {
-        requestId: 'req-jwt',
-        authorizer: { claims: { 'custom:tenant_id': 'tenant-1', sub: 'user-1' } }
+        requestId: 'req-auth-ctx',
+        authorizer: { 
+          tenantId: 'api-key-tenant',
+          userId: 'api-key-user'
+        } as any
       }
+    });
+
+    const response = await controller.handle(event);
+    const captured = useCase.getCapturedInput();
+
+    expect(response.statusCode).toBe(200);
+    expect(captured).toMatchObject({
+      tenantId: 'api-key-tenant',
+      userId: 'api-key-user',
+      agentId: 'agent-1',
+      requestId: 'req-auth-ctx'
+    });
+  });
+
+  it('authenticates with valid JWT token', async () => {
+    const useCase = createUseCase();
+    const controller = new ChatController(useCase as any);
+
+    const token = jwt.sign(
+      { sub: 'user-1', 'custom:tenant_id': 'tenant-1' },
+      testSecret,
+      { algorithm: 'HS256' }
+    );
+
+    const event = createEvent({
+      headers: { authorization: `Bearer ${token}` },
+      requestContext: { requestId: 'req-jwt', authorizer: { claims: {} } }
     });
 
     const response = await controller.handle(event);
@@ -67,12 +111,12 @@ describe('ChatController authentication', () => {
     });
   });
 
-  it('authenticates with x-api-key header when JWT is absent', async () => {
+  it('authenticates with valid API key', async () => {
     const useCase = createUseCase();
     const controller = new ChatController(useCase as any);
 
     const event = createEvent({
-      headers: { 'x-api-key': 'test-key' },
+      headers: { authorization: 'Bearer test-api-key' },
       requestContext: { requestId: 'req-key', authorizer: { claims: {} } }
     });
 
@@ -81,59 +125,50 @@ describe('ChatController authentication', () => {
 
     expect(response.statusCode).toBe(200);
     expect(captured).toMatchObject({
-      tenantId: 'default',
-      userId: 'default',
+      tenantId: 'api-key-tenant',
+      userId: 'api-key-user',
       agentId: 'agent-1',
       requestId: 'req-key'
     });
   });
 
-  it('authenticates with X-API-Key header when JWT is absent', async () => {
+  it('returns 401 for invalid JWT signature', async () => {
+    const useCase = createUseCase();
+    const controller = new ChatController(useCase as any);
+
+    const token = jwt.sign(
+      { sub: 'user-1', 'custom:tenant_id': 'tenant-1' },
+      'wrong-secret',
+      { algorithm: 'HS256' }
+    );
+
+    const event = createEvent({
+      headers: { authorization: `Bearer ${token}` },
+      requestContext: { requestId: 'req-invalid-jwt', authorizer: { claims: {} } }
+    });
+
+    const response = await controller.handle(event);
+
+    expect(response.statusCode).toBe(401);
+    expect(useCase.getCapturedInput()).toBeUndefined();
+  });
+
+  it('returns 401 for invalid API key', async () => {
     const useCase = createUseCase();
     const controller = new ChatController(useCase as any);
 
     const event = createEvent({
-      headers: { 'X-API-Key': 'test-key' },
-      requestContext: { requestId: 'req-key-upper', authorizer: { claims: {} } }
+      headers: { authorization: 'Bearer wrong-key' },
+      requestContext: { requestId: 'req-invalid-key', authorizer: { claims: {} } }
     });
 
     const response = await controller.handle(event);
-    const captured = useCase.getCapturedInput();
 
-    expect(response.statusCode).toBe(200);
-    expect(captured).toMatchObject({
-      tenantId: 'default',
-      userId: 'default',
-      agentId: 'agent-1',
-      requestId: 'req-key-upper'
-    });
+    expect(response.statusCode).toBe(401);
+    expect(useCase.getCapturedInput()).toBeUndefined();
   });
 
-  it('prioritizes JWT when both JWT and API Key are present', async () => {
-    const useCase = createUseCase();
-    const controller = new ChatController(useCase as any);
-
-    const event = createEvent({
-      headers: { 'x-api-key': 'test-key' },
-      requestContext: {
-        requestId: 'req-both',
-        authorizer: { claims: { 'custom:tenant_id': 'tenant-2', sub: 'user-2' } }
-      }
-    });
-
-    const response = await controller.handle(event);
-    const captured = useCase.getCapturedInput();
-
-    expect(response.statusCode).toBe(200);
-    expect(captured).toMatchObject({
-      tenantId: 'tenant-2',
-      userId: 'user-2',
-      agentId: 'agent-1',
-      requestId: 'req-both'
-    });
-  });
-
-  it('returns 401 when neither JWT nor API Key is provided', async () => {
+  it('returns 401 when no authentication is provided', async () => {
     const useCase = createUseCase();
     const controller = new ChatController(useCase as any);
 

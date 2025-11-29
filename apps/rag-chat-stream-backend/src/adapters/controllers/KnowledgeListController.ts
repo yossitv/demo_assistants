@@ -3,13 +3,9 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from '../../shared/types'
 import { ILogger } from '../../domain/services/ILogger';
 import { CloudWatchLogger } from '../../infrastructure/services/CloudWatchLogger';
 import { successResponse, errorResponse } from '../../shared/cors';
-import { extractApiKeyFromHeaders } from '../../shared/apiKey';
-
-type AuthenticationContext = {
-  tenantId: string;
-  userId: string;
-  authMethod: 'jwt' | 'apikey';
-};
+import { AuthenticationContext } from '../../shared/auth';
+import { validateApiKey } from '../../shared/apiKeyCheck';
+import { verifyJwt } from '../../shared/jwtVerify';
 
 export class KnowledgeListController {
   private readonly logger: ILogger;
@@ -135,20 +131,32 @@ export class KnowledgeListController {
       };
     }
 
-    // Check for JWT claims (Cognito authentication)
-    const claims = authorizerContext?.claims;
-    const tenantId = claims?.['custom:tenant_id'];
-    const userId = claims?.sub;
+    // Try JWT verification
+    const authHeader = Object.entries(event.headers || {}).find(
+      ([headerName]) => headerName.toLowerCase() === 'authorization'
+    )?.[1];
 
-    if (tenantId && userId) {
-      return { tenantId, userId, authMethod: 'jwt' };
+    if (authHeader) {
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      const jwtResult = verifyJwt(token, this.logger);
+      
+      if (jwtResult.isValid && jwtResult.payload) {
+        return {
+          tenantId: jwtResult.payload['custom:tenant_id'],
+          userId: jwtResult.payload.sub,
+          authMethod: 'jwt'
+        };
+      }
     }
 
-    // Fallback: validate API key from Authorization (preferred) or x-api-key (legacy)
-    const { apiKey } = extractApiKeyFromHeaders(event.headers);
-    const expectedApiKey = process.env.TAVUS_API_KEY || process.env.TEST_API_KEY;
-    if (apiKey && (!expectedApiKey || apiKey === expectedApiKey)) {
-      return { tenantId: 'default', userId: 'default', authMethod: 'apikey' };
+    // Try API key validation
+    const apiKeyResult = validateApiKey(event.headers || {}, this.logger);
+    if (apiKeyResult.isValid && apiKeyResult.tenantId && apiKeyResult.userId) {
+      return {
+        tenantId: apiKeyResult.tenantId,
+        userId: apiKeyResult.userId,
+        authMethod: 'apikey'
+      };
     }
 
     return null;

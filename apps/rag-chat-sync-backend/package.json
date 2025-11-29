@@ -17,7 +17,13 @@
     "type": "git",
     "url": "git+https://github.com/yossitv/assistants.git"
   },
-  "keywords": ["rag", "chat", "aws", "cdk", "typescript"],
+  "keywords": [
+    "rag",
+    "chat",
+    "aws",
+    "cdk",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -29,13 +35,13 @@
     "@aws-sdk/client-dynamodb": "^3.600.0",
     "@aws-sdk/lib-dynamodb": "^3.600.0",
     "@qdrant/js-client-rest": "^1.9.0",
-    "openai": "^4.47.0",
-    "cheerio": "^1.0.0-rc.12",
-    "tiktoken": "^1.0.15",
-    "axios": "^1.7.2",
-    "zod": "^3.23.8",
     "aws-cdk-lib": "^2.140.0",
-    "constructs": "^10.3.0"
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "constructs": "^10.3.0",
+    "openai": "^4.47.0",
+    "tiktoken": "^1.0.15",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.138",

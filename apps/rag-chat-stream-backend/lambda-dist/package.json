@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
+    "test": "jest --runInBand",
+    "test:parallel": "jest",
     "test:property": "jest --testMatch='**/*.property.test.ts'",
     "cdk:deploy": "cdk deploy",
     "cdk:synth": "cdk synth",
@@ -36,10 +37,12 @@
     "@aws-sdk/client-dynamodb": "^3.600.0",
     "@aws-sdk/lib-dynamodb": "^3.600.0",
     "@qdrant/js-client-rest": "^1.9.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "aws-cdk-lib": "^2.140.0",
     "axios": "^1.7.2",
     "cheerio": "^1.0.0-rc.12",
     "constructs": "^10.3.0",
+    "jsonwebtoken": "^9.0.2",
     "openai": "^4.47.0",
     "tiktoken": "^1.0.15",
     "zod": "^3.23.8"

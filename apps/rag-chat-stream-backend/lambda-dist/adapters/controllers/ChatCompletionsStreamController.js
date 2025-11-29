@@ -6,8 +6,9 @@ const errors_1 = require("../../shared/errors");
 const CloudWatchLogger_1 = require("../../infrastructure/services/CloudWatchLogger");
 const streaming_1 = require("../../shared/streaming");
 const sse_1 = require("../../shared/sse");
-const apiKey_1 = require("../../shared/apiKey");
 const cors_1 = require("../../shared/cors");
+const apiKeyCheck_1 = require("../../shared/apiKeyCheck");
+const jwtVerify_1 = require("../../shared/jwtVerify");
 const noopLogger = { debug: () => { }, info: () => { }, warn: () => { }, error: () => { } };
 class ChatCompletionsStreamController {
     useCase;
@@ -93,8 +94,8 @@ class ChatCompletionsStreamController {
                 this.writeJsonError(responseStream, 400, error.message);
                 return;
             }
-            const tenantId = authContext?.tenantId || event.requestContext.authorizer?.claims?.['custom:tenant_id'];
-            const userId = authContext?.userId || event.requestContext.authorizer?.claims?.sub;
+            const tenantId = authContext?.tenantId;
+            const userId = authContext?.userId;
             const authMethod = authContext?.authMethod || 'none';
             if (this.structuredLogger && tenantId) {
                 this.structuredLogger.logErrorWithContext('Error in ChatCompletionsStreamController', error, {
@@ -172,6 +173,7 @@ class ChatCompletionsStreamController {
         return (0, sse_1.splitAnswerIntoChunks)(content, streaming_1.STREAM_CHUNK_SIZE);
     }
     extractAuthenticationContext(event) {
+        // Check for custom authorizer context (API key authentication)
         const authorizerContext = event.requestContext.authorizer;
         if (authorizerContext?.tenantId && authorizerContext?.userId) {
             return {
@@ -180,46 +182,29 @@ class ChatCompletionsStreamController {
                 authMethod: 'apikey'
             };
         }
-        const claims = authorizerContext?.claims;
-        const tenantId = claims?.['custom:tenant_id'];
-        const userId = claims?.sub;
+        // Try JWT verification
         const authHeader = Object.entries(event.headers || {}).find(([headerName]) => headerName.toLowerCase() === 'authorization')?.[1];
-        if (!tenantId || !userId) {
-            const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
-            const decodedClaims = bearerToken ? this.decodeJwtWithoutVerification(bearerToken) : null;
-            const decodedTenantId = decodedClaims?.['custom:tenant_id'];
-            const decodedUserId = decodedClaims?.sub;
-            if (decodedTenantId && decodedUserId) {
-                return { tenantId: decodedTenantId, userId: decodedUserId, authMethod: 'jwt' };
+        if (authHeader) {
+            const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+            const jwtResult = (0, jwtVerify_1.verifyJwt)(token, this.logger);
+            if (jwtResult.isValid && jwtResult.payload) {
+                return {
+                    tenantId: jwtResult.payload['custom:tenant_id'],
+                    userId: jwtResult.payload.sub,
+                    authMethod: 'jwt'
+                };
             }
         }
-        if (tenantId && userId) {
-            return { tenantId, userId, authMethod: 'jwt' };
-        }
-        const { apiKey } = (0, apiKey_1.extractApiKeyFromHeaders)(event.headers);
-        const expectedApiKey = process.env.TAVUS_API_KEY || process.env.TEST_API_KEY;
-        const apiKeyIsValid = apiKey && (!expectedApiKey || apiKey === expectedApiKey);
-        if (apiKeyIsValid) {
+        // Try API key validation
+        const apiKeyResult = (0, apiKeyCheck_1.validateApiKey)(event.headers || {}, this.logger);
+        if (apiKeyResult.isValid && apiKeyResult.tenantId && apiKeyResult.userId) {
             return {
-                tenantId: 'default',
-                userId: 'default',
+                tenantId: apiKeyResult.tenantId,
+                userId: apiKeyResult.userId,
                 authMethod: 'apikey'
             };
         }
         return null;
-    }
-    decodeJwtWithoutVerification(token) {
-        const parts = token.split('.');
-        if (parts.length < 2) {
-            return null;
-        }
-        try {
-            const payload = Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
-            return JSON.parse(payload);
-        }
-        catch {
-            return null;
-        }
     }
 }
 exports.ChatCompletionsStreamController = ChatCompletionsStreamController;

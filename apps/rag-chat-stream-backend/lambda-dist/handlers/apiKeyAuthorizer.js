@@ -1,29 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const apiKey_1 = require("../shared/apiKey");
+const apiKeyCheck_1 = require("../shared/apiKeyCheck");
 /**
  * Lambda authorizer handler for API key authentication
- * Extracts API key from Authorization or x-api-key header and returns IAM policy
+ * Uses fail-closed validation - denies access unless API key is valid
  */
 const handler = async (event) => {
-    const { apiKey, hasAuthorizationHeader, hasXApiKeyHeader } = (0, apiKey_1.extractApiKeyFromHeaders)(event.headers);
-    // Secure logging - never log actual API key values
-    console.log(JSON.stringify({
-        requestId: event.requestContext?.requestId || 'unknown',
-        hasAuthorizationHeader,
-        hasXApiKeyHeader,
-        timestamp: new Date().toISOString(),
-    }));
-    // Validate API key exists and is not empty
-    if (!apiKey || apiKey.length === 0) {
-        throw new Error('Unauthorized');
+    const headers = event.headers || {};
+    const validationResult = (0, apiKeyCheck_1.validateApiKey)(headers, {
+        debug: (msg, meta) => console.log(JSON.stringify({ level: 'debug', message: msg, ...meta })),
+        info: (msg, meta) => console.log(JSON.stringify({ level: 'info', message: msg, ...meta })),
+        warn: (msg, meta) => console.warn(JSON.stringify({ level: 'warn', message: msg, ...meta })),
+        error: (msg, err, meta) => console.error(JSON.stringify({ level: 'error', message: msg, error: err?.message, ...meta })),
+    });
+    if (!validationResult.isValid) {
+        // Fail-closed: return Deny policy
+        return {
+            principalId: 'unauthorized',
+            policyDocument: {
+                Version: '2012-10-17',
+                Statement: [
+                    {
+                        Action: 'execute-api:Invoke',
+                        Effect: 'Deny',
+                        Resource: event.methodArn,
+                    },
+                ],
+            },
+        };
     }
     const resourceArn = buildResourceArn(event.methodArn);
-    // Return IAM policy allowing access to all API methods
-    // Add context with tenant information for Lambda handlers
+    // Return Allow policy with validated context
     const policy = {
-        principalId: 'api-key-user',
+        principalId: validationResult.userId,
         policyDocument: {
             Version: '2012-10-17',
             Statement: [
@@ -35,11 +45,10 @@ const handler = async (event) => {
             ],
         },
         context: {
-            tenantId: 'default', // Dedicated tenant ID for API key authentication
-            userId: 'api-key-user', // User ID for API key authenticated requests
-            authType: 'api-key', // Mark this as API key authentication
+            tenantId: validationResult.tenantId,
+            userId: validationResult.userId,
+            authType: 'api-key',
         },
-        usageIdentifierKey: apiKey,
     };
     return policy;
 };

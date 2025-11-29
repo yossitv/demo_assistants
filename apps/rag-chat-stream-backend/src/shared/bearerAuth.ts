@@ -72,10 +72,13 @@ export const validateBearerToken = (
     throw new AuthenticationError('Unauthorized');
   }
 
-  const expectedToken = options.expectedToken ?? process.env.TAUVS_API_KEY;
+  const expectedToken = options.expectedToken
+    ?? process.env.EXPECTED_API_KEY
+    ?? process.env.TAUVS_API_KEY
+    ?? process.env.RAG_STREAM_API_KEY;
   if (!expectedToken) {
-    logger?.error('TAUVS_API_KEY is not configured', undefined, logMeta);
-    throw new InternalError('TAUVS_API_KEY is not configured');
+    logger?.error('EXPECTED_API_KEY is not configured', undefined, logMeta);
+    throw new InternalError('EXPECTED_API_KEY is not configured');
   }
 
   if (token !== expectedToken) {

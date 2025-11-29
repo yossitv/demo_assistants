@@ -14,7 +14,7 @@
 
 2. **Bearer Authentication** (`src/shared/bearerAuth.ts`)
    - Case-insensitive Authorization header parsing
-   - Token validation against TEST_API_KEY
+   - Token validation against RAG_STREAM_API_KEY/EXPECTED_API_KEY
    - Secure token logging (preview only)
 
 3. **Streaming Configuration** (`src/shared/streamingConfig.ts`)
@@ -49,7 +49,7 @@
   - Runtime: Node.js 20.x ✓
   - Timeout: 180 seconds (3 minutes) ✓
   - Memory: 1024 MB ✓
-  - Environment: TEST_API_KEY ✓
+  - Environment: RAG_STREAM_API_KEY/EXPECTED_API_KEY ✓
 
 - **API Gateway:**
   - Endpoint: `/v1/chat/completions/stream` ✓
@@ -102,7 +102,7 @@ POST /v1/chat/completions
 ### Authentication
 
 ```http
-Authorization: Bearer <TEST_API_KEY>
+Authorization: Bearer <RAG_STREAM_API_KEY>
 ```
 
 ### Request (Streaming)
@@ -135,7 +135,7 @@ data: [DONE]
 
 - ✅ Node.js 20+ installed
 - ✅ AWS CDK configured
-- ✅ Environment variables set (TEST_API_KEY, OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY)
+- ✅ Environment variables set (RAG_STREAM_API_KEY, OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY)
 - ✅ Lambda deployment package prepared
 - ✅ All tests passing
 - ✅ Build successful
@@ -144,7 +144,7 @@ data: [DONE]
 
 ```bash
 cd apps/rag-chat-stream-backend
-export TEST_API_KEY="your-api-key-min-20-chars"
+export RAG_STREAM_API_KEY="your-api-key-min-20-chars"
 export OPENAI_API_KEY="sk-..."
 export QDRANT_URL="https://..."
 export QDRANT_API_KEY="..."
@@ -176,7 +176,7 @@ npx cdk deploy
 2. **Test Streaming Endpoint:**
    ```bash
    curl -N -X POST https://your-api-url/v1/chat/completions \
-     -H "Authorization: Bearer ${TEST_API_KEY}" \
+     -H "Authorization: Bearer ${RAG_STREAM_API_KEY}" \
      -H "Content-Type: application/json" \
      -d '{"model":"agent-123","messages":[{"role":"user","content":"Hello"}],"stream":true}'
    ```
@@ -188,8 +188,8 @@ npx cdk deploy
 
 ## Notes
 
-- **TEST_API_KEY** is used for Lambda Bearer token authentication (not TAUVS_API_KEY)
-- Tauvs (client) uses TEST_API_KEY to authenticate with Lambda (server)
+- **RAG_STREAM_API_KEY** is used for Lambda Bearer token authentication (propagated to EXPECTED_API_KEY/TAUVS_API_KEY)
+- Tauvs (client) uses RAG_STREAM_API_KEY to authenticate with Lambda (server)
 - Streaming timeout is 180 seconds (3 minutes)
 - Chunk size is configurable (20-50 chars, default 32)
 - UTF-8 boundaries are respected in chunk splitting

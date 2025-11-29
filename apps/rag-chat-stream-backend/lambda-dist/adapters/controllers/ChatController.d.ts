@@ -9,6 +9,5 @@ export declare class ChatController {
     handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult>;
     private extractAuthenticationContext;
     private logUnauthorizedAttempt;
-    private decodeJwtWithoutVerification;
 }
 //# sourceMappingURL=ChatController.d.ts.map

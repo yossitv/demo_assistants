@@ -1,7 +1,10 @@
 const http = require('http');
 
 const PORT = 3001;
-const TEST_API_KEY = 'example-test-api-key-12345';
+const TEST_API_KEY = process.env.RAG_STREAM_API_KEY
+  || process.env.EXPECTED_API_KEY
+  || process.env.TAUVS_API_KEY
+  || 'example-test-api-key-12345';
 
 const server = http.createServer((req, res) => {
   // CORS

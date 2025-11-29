@@ -5,13 +5,9 @@ import { successResponse, errorResponse } from '../../shared/cors';
 import { ValidationError } from '../../shared/errors';
 import { ILogger } from '../../domain/services/ILogger';
 import { CloudWatchLogger } from '../../infrastructure/services/CloudWatchLogger';
-import { extractApiKeyFromHeaders } from '../../shared/apiKey';
-
-type AuthenticationContext = {
-  tenantId: string;
-  userId: string;
-  authMethod: 'jwt' | 'apikey';
-};
+import { AuthenticationContext } from '../../shared/auth';
+import { validateApiKey } from '../../shared/apiKeyCheck';
+import { verifyJwt } from '../../shared/jwtVerify';
 
 export class ChatController {
   private readonly logger: ILogger;
@@ -22,7 +18,6 @@ export class ChatController {
     logger?: ILogger
   ) {
     this.logger = logger || { debug: () => { }, info: () => { }, warn: () => { }, error: () => { } };
-    // Check if logger is CloudWatchLogger for structured logging
     if (logger instanceof CloudWatchLogger) {
       this.structuredLogger = logger;
     }
@@ -44,7 +39,6 @@ export class ChatController {
       const { tenantId, userId, authMethod } = authContext;
       const validatedBody = validateChatRequestBody(event.body);
 
-      // Log request summary
       if (this.structuredLogger) {
         this.structuredLogger.logRequest({
           requestId,
@@ -76,7 +70,6 @@ export class ChatController {
 
       const durationMs = Date.now() - startTime;
 
-      // Log response summary with timing
       if (this.structuredLogger) {
         this.structuredLogger.logResponse({
           requestId,
@@ -113,9 +106,8 @@ export class ChatController {
         return errorResponse(400, error.message);
       }
 
-      // Log error with full context
-      const tenantId = authContext?.tenantId || event.requestContext.authorizer?.claims?.['custom:tenant_id'];
-      const userId = authContext?.userId || event.requestContext.authorizer?.claims?.sub;
+      const tenantId = authContext?.tenantId;
+      const userId = authContext?.userId;
       const authMethod = authContext?.authMethod || 'none';
 
       if (this.structuredLogger && tenantId) {
@@ -158,39 +150,30 @@ export class ChatController {
       };
     }
 
-    // Check for JWT claims (Cognito authentication)
-    const claims = authorizerContext?.claims;
-    const tenantId = claims?.['custom:tenant_id'];
-    const userId = claims?.sub;
-
+    // Try JWT verification
     const authHeader = Object.entries(event.headers || {}).find(
       ([headerName]) => headerName.toLowerCase() === 'authorization'
     )?.[1];
 
-    if (!tenantId || !userId) {
-      const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
-      const decodedClaims = bearerToken ? this.decodeJwtWithoutVerification(bearerToken) : null;
-      const decodedTenantId = decodedClaims?.['custom:tenant_id'] as string | undefined;
-      const decodedUserId = decodedClaims?.sub as string | undefined;
-
-      if (decodedTenantId && decodedUserId) {
-        return { tenantId: decodedTenantId, userId: decodedUserId, authMethod: 'jwt' };
+    if (authHeader) {
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      const jwtResult = verifyJwt(token, this.logger);
+      
+      if (jwtResult.isValid && jwtResult.payload) {
+        return {
+          tenantId: jwtResult.payload['custom:tenant_id'],
+          userId: jwtResult.payload.sub,
+          authMethod: 'jwt'
+        };
       }
     }
 
-    if (tenantId && userId) {
-      return { tenantId, userId, authMethod: 'jwt' };
-    }
-
-    // Fallback: validate API key from Authorization (preferred) or x-api-key (legacy)
-    const { apiKey } = extractApiKeyFromHeaders(event.headers);
-    const expectedApiKey = process.env.TAVUS_API_KEY || process.env.TEST_API_KEY;
-    const apiKeyIsValid = apiKey && (!expectedApiKey || apiKey === expectedApiKey);
-
-    if (apiKeyIsValid) {
+    // Try API key validation
+    const apiKeyResult = validateApiKey(event.headers || {}, this.logger);
+    if (apiKeyResult.isValid && apiKeyResult.tenantId && apiKeyResult.userId) {
       return {
-        tenantId: 'default',
-        userId: 'default',
+        tenantId: apiKeyResult.tenantId,
+        userId: apiKeyResult.userId,
         authMethod: 'apikey'
       };
     }
@@ -205,19 +188,4 @@ export class ChatController {
       reason: 'Missing authentication credentials'
     });
   }
-
-  private decodeJwtWithoutVerification(token: string): Record<string, unknown> | null {
-    const parts = token.split('.');
-    if (parts.length < 2) {
-      return null;
-    }
-
-    try {
-      const payload = Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
-      return JSON.parse(payload);
-    } catch {
-      return null;
-    }
-  }
-
 }

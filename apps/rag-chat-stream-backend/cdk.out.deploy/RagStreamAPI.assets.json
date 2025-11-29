@@ -1,0 +1,36 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03": {
+      "displayName": "KnowledgeCreateFunction/Code",
+      "source": {
+        "path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "381492091301-us-east-1-7c584c0e": {
+          "bucketName": "cdk-hnb659fds-assets-381492091301-us-east-1",
+          "objectKey": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-file-publishing-role-381492091301-us-east-1"
+        }
+      }
+    },
+    "50d2c55f09e538afc641e2adf6b03baf59da381e88b382f4330429f5d5ef0459": {
+      "displayName": "RagStreamAPI Template",
+      "source": {
+        "path": "RagStreamAPI.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "381492091301-us-east-1-e12232d3": {
+          "bucketName": "cdk-hnb659fds-assets-381492091301-us-east-1",
+          "objectKey": "50d2c55f09e538afc641e2adf6b03baf59da381e88b382f4330429f5d5ef0459.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-file-publishing-role-381492091301-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

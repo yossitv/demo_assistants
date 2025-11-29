@@ -14,6 +14,5 @@ export declare class StreamingChatController {
     private buildStreamResult;
     private chunkContent;
     private logUnauthorizedAttempt;
-    private decodeJwtWithoutVerification;
 }
 //# sourceMappingURL=StreamingChatController.d.ts.map

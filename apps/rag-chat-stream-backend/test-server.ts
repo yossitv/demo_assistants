@@ -83,5 +83,6 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`🚀 Streaming test server running on http://localhost:${PORT}`);
   console.log(`📡 Endpoint: POST http://localhost:${PORT}/v1/chat/completions`);
-  console.log(`🔑 Use: Authorization: Bearer ${process.env.TEST_API_KEY}`);
+  const apiKey = process.env.RAG_STREAM_API_KEY || process.env.EXPECTED_API_KEY || process.env.TAUVS_API_KEY || 'example-test-api-key-12345';
+  console.log(`🔑 Use: Authorization: Bearer ${apiKey}`);
 });

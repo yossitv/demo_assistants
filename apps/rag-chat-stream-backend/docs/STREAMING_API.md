@@ -10,11 +10,11 @@ The `/v1/chat/completions` endpoint supports both streaming and non-streaming re
 
 ```http
 POST /v1/chat/completions
-Authorization: Bearer <TEST_API_KEY>
+Authorization: Bearer <RAG_STREAM_API_KEY>
 Content-Type: application/json
 ```
 
-The Lambda function validates the Bearer token against the `TEST_API_KEY` environment variable.
+The Lambda function validates the Bearer token against the `RAG_STREAM_API_KEY` (propagated to `EXPECTED_API_KEY`/`TAUVS_API_KEY`) environment variables.
 
 ### API Key (for other clients)
 
@@ -160,7 +160,7 @@ Errors before streaming starts return JSON:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `TEST_API_KEY` | Bearer token for Lambda authentication | Yes |
+| `RAG_STREAM_API_KEY` | Bearer token for Lambda authentication (also propagated to EXPECTED_API_KEY/TAUVS_API_KEY) | Yes |
 | `OPENAI_API_KEY` | OpenAI API key for LLM | Yes |
 | `QDRANT_URL` | Qdrant vector database URL | Yes |
 | `QDRANT_API_KEY` | Qdrant API key | Yes |
@@ -174,7 +174,7 @@ Errors before streaming starts return JSON:
 
 ```bash
 curl -X POST https://api.example.com/v1/chat/completions \
-  -H "Authorization: Bearer ${TEST_API_KEY}" \
+  -H "Authorization: Bearer ${RAG_STREAM_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "agent-123",
@@ -187,7 +187,7 @@ curl -X POST https://api.example.com/v1/chat/completions \
 
 ```bash
 curl -X POST https://api.example.com/v1/chat/completions \
-  -H "Authorization: Bearer ${TEST_API_KEY}" \
+  -H "Authorization: Bearer ${RAG_STREAM_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "agent-123",
@@ -202,7 +202,7 @@ curl -X POST https://api.example.com/v1/chat/completions \
 const response = await fetch('https://api.example.com/v1/chat/completions', {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${process.env.TEST_API_KEY}`,
+    'Authorization': `Bearer ${process.env.RAG_STREAM_API_KEY}`,
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({

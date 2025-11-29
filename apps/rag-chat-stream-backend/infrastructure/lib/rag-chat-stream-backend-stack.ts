@@ -36,9 +36,11 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // For MVP - change for production
     });
 
-    const testApiKeyValue = process.env.TEST_API_KEY;
-    if (!testApiKeyValue || testApiKeyValue.length < 20) {
-      throw new Error('TEST_API_KEY must be set and at least 20 characters long for Lambda API authentication.');
+    const ragApiKeyValue = process.env.RAG_STREAM_API_KEY
+      || process.env.EXPECTED_API_KEY
+      || process.env.TEST_API_KEY;
+    if (!ragApiKeyValue || ragApiKeyValue.length < 20) {
+      throw new Error('RAG_STREAM_API_KEY (or EXPECTED_API_KEY) must be set and at least 20 characters long for Lambda/API authentication.');
     }
 
     // Environment variables for Lambda functions
@@ -55,7 +57,9 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       SIMILARITY_THRESHOLD: '0.35',
       TOP_K: '8',
       MAX_CITED_URLS: '3',
-      TEST_API_KEY: testApiKeyValue, // For Lambda Bearer token authentication
+      EXPECTED_API_KEY: ragApiKeyValue, // For API Gateway authorizer
+      TAUVS_API_KEY: ragApiKeyValue,    // For bearer auth validation
+      RAG_STREAM_API_KEY: ragApiKeyValue,
     };
 
     // Lambda execution role
@@ -205,8 +209,8 @@ export class RagChatStreamBackendStack extends cdk.Stack {
 
     // API Gateway
     const api = new apigateway.RestApi(this, 'RagChatApi', {
-      restApiName: 'RAG Chat Backend API',
-      description: 'OpenAI-compatible RAG chat API with knowledge management',
+      restApiName: 'RAG Chat Stream Backend API',
+      description: 'OpenAI-compatible RAG chat API with streaming support',
       apiKeySourceType: apigateway.ApiKeySourceType.AUTHORIZER,
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
@@ -322,10 +326,11 @@ export class RagChatStreamBackendStack extends cdk.Stack {
     });
 
     // API Key and Usage Plan for external API access
-    const apiKey = api.addApiKey('LambdaApiKey', {
-      apiKeyName: 'lambda-api-key',
+    const apiKeyName = process.env.RAG_STREAM_API_KEY_NAME || `rag-stream-api-key-${cdk.Names.uniqueId(api)}`;
+    const apiKey = api.addApiKey('LambdaApiKeyV2', {
+      apiKeyName,
       description: 'API Key for Lambda endpoint access',
-      value: testApiKeyValue,
+      value: ragApiKeyValue,
     });
 
     const usagePlan = api.addUsagePlan('LambdaUsagePlan', {
@@ -377,7 +382,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
         comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
         alarmDescription: `Lambda error rate exceeded 5% for ${lambdaFunction.node.id}`,
-        alarmName: `${lambdaFunction.node.id}-ErrorRate-High`,
+        alarmName: `Stream-${lambdaFunction.node.id}-ErrorRate-High`,
       });
 
       // High Latency Alarm (p99 > threshold)
@@ -396,7 +401,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
         comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
         alarmDescription: `Lambda p99 latency exceeded ${latencyThreshold}ms for ${lambdaFunction.node.id}`,
-        alarmName: `${lambdaFunction.node.id}-Latency-High`,
+        alarmName: `Stream-${lambdaFunction.node.id}-Latency-High`,
       });
     });
 
@@ -428,7 +433,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
       alarmDescription: 'API Gateway 5xx error rate exceeded 1%',
-      alarmName: 'ApiGateway-5xxErrorRate-High',
+      alarmName: 'Stream-ApiGateway-5xxErrorRate-High',
     });
 
     // DynamoDB Throttling Alarms
@@ -453,7 +458,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
         comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
         alarmDescription: `DynamoDB read throttling detected on ${name}`,
-        alarmName: `${name}-ReadThrottling`,
+        alarmName: `Stream-${name}-ReadThrottling`,
       });
 
       // Monitor write throttling
@@ -470,7 +475,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
         comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
         alarmDescription: `DynamoDB write throttling detected on ${name}`,
-        alarmName: `${name}-WriteThrottling`,
+        alarmName: `Stream-${name}-WriteThrottling`,
       });
 
       // Monitor query throttling
@@ -487,7 +492,7 @@ export class RagChatStreamBackendStack extends cdk.Stack {
         comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
         alarmDescription: `DynamoDB query throttling detected on ${name}`,
-        alarmName: `${name}-QueryThrottling`,
+        alarmName: `Stream-${name}-QueryThrottling`,
       });
     });
 
@@ -512,9 +517,9 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       description: 'DynamoDB Conversations Table Name',
     });
 
-    new cdk.CfnOutput(this, 'TestApiKeyValue', {
-      value: testApiKeyValue,
-      description: 'API Key value for Lambda authentication (from TEST_API_KEY env var)',
-    });
+    // new cdk.CfnOutput(this, 'RagStreamApiKeyValue', {
+    //   value: ragApiKeyValue,
+    //   description: 'API Key value for Lambda authentication (from RAG_STREAM_API_KEY env var)',
+    // });
   }
 }

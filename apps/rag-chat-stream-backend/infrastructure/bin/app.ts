@@ -5,7 +5,7 @@ import { RagChatStreamBackendStack } from '../lib/rag-chat-stream-backend-stack'
 
 const app = new cdk.App();
 
-new RagChatStreamBackendStack(app, 'RagChatStreamBackendStack', {
+new RagChatStreamBackendStack(app, 'RagStreamAPI', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,

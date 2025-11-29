@@ -12,6 +12,5 @@ export declare class ChatCompletionsStreamController {
     private streamCompletion;
     private chunkContent;
     private extractAuthenticationContext;
-    private decodeJwtWithoutVerification;
 }
 //# sourceMappingURL=ChatCompletionsStreamController.d.ts.map

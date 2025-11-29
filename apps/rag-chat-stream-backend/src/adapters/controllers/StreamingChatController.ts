@@ -6,13 +6,9 @@ import { ValidationError } from '../../shared/errors';
 import { ILogger } from '../../domain/services/ILogger';
 import { CloudWatchLogger } from '../../infrastructure/services/CloudWatchLogger';
 import { buildSSEHeaders, DONE_SSE_EVENT, formatSSEData, STREAM_CHUNK_SIZE } from '../../shared/streaming';
-import { extractApiKeyFromHeaders } from '../../shared/apiKey';
-
-type AuthenticationContext = {
-  tenantId: string;
-  userId: string;
-  authMethod: 'jwt' | 'apikey';
-};
+import { AuthenticationContext } from '../../shared/auth';
+import { validateApiKey } from '../../shared/apiKeyCheck';
+import { verifyJwt } from '../../shared/jwtVerify';
 
 export class StreamingChatController {
   private readonly logger: ILogger;
@@ -114,8 +110,8 @@ export class StreamingChatController {
         return errorResponse(400, error.message);
       }
 
-      const tenantId = authContext?.tenantId || event.requestContext.authorizer?.claims?.['custom:tenant_id'];
-      const userId = authContext?.userId || event.requestContext.authorizer?.claims?.sub;
+      const tenantId = authContext?.tenantId;
+      const userId = authContext?.userId;
       const authMethod = authContext?.authMethod || 'none';
 
       if (this.structuredLogger && tenantId) {
@@ -178,22 +174,7 @@ export class StreamingChatController {
   }
 
   private extractAuthenticationContext(event: APIGatewayProxyEvent): AuthenticationContext | null {
-    const headers = event.headers || {};
-    const authHeader = Object.entries(headers).find(
-      ([headerName]) => headerName.toLowerCase() === 'authorization'
-    )?.[1];
-
-    const bearerToken = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
-    if (bearerToken) {
-      const decodedClaims = this.decodeJwtWithoutVerification(bearerToken);
-      const tenantId = decodedClaims?.['custom:tenant_id'] as string | undefined;
-      const userId = decodedClaims?.sub as string | undefined;
-
-      if (tenantId && userId) {
-        return { tenantId, userId, authMethod: 'jwt' };
-      }
-    }
-
+    // Check for custom authorizer context (API key authentication)
     const authorizerContext = event.requestContext.authorizer as any;
     if (authorizerContext?.tenantId && authorizerContext?.userId) {
       return {
@@ -203,20 +184,30 @@ export class StreamingChatController {
       };
     }
 
-    const claims = authorizerContext?.claims;
-    const tenantId = claims?.['custom:tenant_id'];
-    const userId = claims?.sub;
+    // Try JWT verification
+    const authHeader = Object.entries(event.headers || {}).find(
+      ([headerName]) => headerName.toLowerCase() === 'authorization'
+    )?.[1];
 
-    if (tenantId && userId) {
-      return { tenantId, userId, authMethod: 'jwt' };
+    if (authHeader) {
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      const jwtResult = verifyJwt(token, this.logger);
+      
+      if (jwtResult.isValid && jwtResult.payload) {
+        return {
+          tenantId: jwtResult.payload['custom:tenant_id'],
+          userId: jwtResult.payload.sub,
+          authMethod: 'jwt'
+        };
+      }
     }
 
-    const { apiKey } = extractApiKeyFromHeaders(headers);
-    const expectedApiKey = process.env.TAVUS_API_KEY || process.env.TEST_API_KEY;
-    if (apiKey && (!expectedApiKey || apiKey === expectedApiKey)) {
+    // Try API key validation
+    const apiKeyResult = validateApiKey(event.headers || {}, this.logger);
+    if (apiKeyResult.isValid && apiKeyResult.tenantId && apiKeyResult.userId) {
       return {
-        tenantId: 'default',
-        userId: 'default',
+        tenantId: apiKeyResult.tenantId,
+        userId: apiKeyResult.userId,
         authMethod: 'apikey'
       };
     }
@@ -281,19 +272,5 @@ export class StreamingChatController {
       path,
       reason: 'Missing authentication credentials'
     });
-  }
-
-  private decodeJwtWithoutVerification(token: string): Record<string, unknown> | null {
-    const parts = token.split('.');
-    if (parts.length < 2) {
-      return null;
-    }
-
-    try {
-      const payload = Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
-      return JSON.parse(payload);
-    } catch {
-      return null;
-    }
   }
 }

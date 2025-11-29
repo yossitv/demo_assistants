@@ -18,17 +18,30 @@ The existing authentication implementation has several critical security flaws:
 
 ### Proposed Architecture
 
-The solution introduces two layers of authentication:
+The solution introduces two layers of authentication with an OR-based approach:
 
 **Layer 1: API Gateway Authorizer (API Key)**
 - Validates API key against `EXPECTED_API_KEY` environment variable
 - Returns Deny for any validation failure (fail-closed)
 - Passes tenant/user context to Lambda handlers on success
+- Used for server-to-server communication and internal tools
 
-**Layer 2: Controller Authentication (JWT + API Key)**
-- Controllers validate JWT signatures using `JWT_SECRET`
+**Layer 2: Controller Authentication (JWT OR API Key)**
+- Controllers accept EITHER valid JWT OR valid API key (OR condition)
+- JWT is the primary authentication method for user-facing requests
+- API key is accepted as fallback for internal/bot requests that bypass the authorizer
 - Centralized utilities ensure consistent validation logic
 - No default tenant fallback - authentication failures return 401
+
+**Authentication Flow Decision**:
+1. If request has valid JWT → extract tenantId/userId from JWT payload
+2. Else if request has valid API key → use fixed demo tenant/user
+3. Else → return 401
+
+This approach allows:
+- User requests: JWT-based authentication with real user context
+- Internal/bot requests: API key authentication with demo context
+- Fail-closed security: both methods require valid credentials
 
 ```
 ┌─────────────────┐
@@ -85,6 +98,13 @@ export function validateApiKey(
 - Return validation result with context
 - Log validation attempts without exposing key values
 
+**API Key to Tenant/User Mapping**:
+For this hackathon/demo implementation, API key authentication uses fixed values:
+- `tenantId`: "demo"
+- `userId`: "api-key-user"
+
+**Rationale**: This simplified approach is sufficient for hackathon environments where API keys are used for internal tools and bot access. Future versions can implement a mapping table (API Key → Tenant/User) if multi-tenant API key support is needed.
+
 ### 2. JWT Verification Utility
 
 **File**: `src/shared/jwtVerify.ts`
@@ -114,6 +134,21 @@ export function verifyJwt(
 - Extract tenantId and userId from payload
 - Reject tokens with invalid signatures or wrong algorithms
 - Log verification attempts without exposing token values
+
+**JWT Token Assumptions**:
+This implementation assumes **self-issued JWT tokens** for hackathon/demo purposes:
+- **Algorithm**: HS256 (symmetric signing with `JWT_SECRET`)
+- **Issuer**: Application generates its own tokens using the shared secret
+- **Payload structure**: Custom claims including `sub` (userId) and `custom:tenant_id`
+
+**Rationale**: HS256 with a shared secret is simpler for hackathon environments and doesn't require external identity providers. This differs from production systems that typically use:
+- Cognito/Auth0: RS256 with JWKS public key verification
+- OAuth2 providers: RS256 with token introspection
+
+**Future Migration Path**: To support external identity providers (Cognito, Auth0), replace HS256 verification with:
+1. JWKS endpoint fetching
+2. RS256 public key verification
+3. Issuer validation against known providers
 
 ### 3. Updated API Key Authorizer
 
@@ -182,11 +217,13 @@ interface EnvironmentConfig {
 
 ```typescript
 interface AuthorizerContext {
-  tenantId: string;      // Extracted from validated API key
-  userId: string;        // Extracted from validated API key
+  tenantId: string;      // Fixed value: "demo" for API key auth
+  userId: string;        // Fixed value: "api-key-user" for API key auth
   authType: 'api-key';   // Authentication method indicator
 }
 ```
+
+**Note**: For this hackathon implementation, API key authentication always uses fixed demo values. This simplifies the implementation while maintaining fail-closed security.
 
 ### JWT Claims Structure
 
@@ -346,6 +383,12 @@ function validateEnvironment(): void {
 }
 ```
 
+**Startup Behavior**:
+- **Development/Local**: Lambda starts successfully but logs warnings. All authentication requests return 401 if environment variables are missing. This allows developers to test other functionality without authentication.
+- **Staging/Production**: Same behavior - Lambda starts but authentication fails. This is intentional to avoid blocking deployments, but monitoring should alert on authentication failures.
+
+**Rationale**: Fail-at-runtime rather than fail-at-startup allows the service to remain partially operational for health checks and non-authenticated endpoints. However, all authenticated endpoints will consistently return 401 when environment variables are missing, maintaining fail-closed security.
+
 ## Testing Strategy
 
 ### Unit Testing
@@ -379,7 +422,16 @@ Unit tests will verify specific examples and edge cases:
 
 ### Property-Based Testing
 
-Property-based tests will verify universal properties across many inputs using fast-check library:
+Property-based tests will verify universal properties across many inputs using fast-check library.
+
+**Priority Level**: Property-based tests are **nice-to-have** for this hackathon implementation. Unit tests (example-based) are mandatory and provide sufficient coverage for the security requirements. Property-based tests add extra confidence but require additional setup (test logger injection, mock infrastructure) that may not be justified for a demo environment.
+
+**Recommended Approach**:
+1. Implement all unit tests first (mandatory)
+2. Add property-based tests for critical security properties if time permits (optional)
+3. Focus property testing on utilities (apiKeyCheck, jwtVerify) rather than full controller integration
+
+**Property Tests** (optional, implement if time allows):
 
 1. **Property 1: Invalid API keys are always rejected**
    - Generate random API key values (excluding valid one)
@@ -439,6 +491,8 @@ Property-based tests will verify universal properties across many inputs using f
 14. **Property 14: Successful authentication provides complete context**
     - Generate valid credentials
     - Verify context has non-empty tenantId and userId
+
+**Note on Logging Tests**: Properties 2, 10, 12, 13 require test logger injection, which adds complexity. Consider these lowest priority for hackathon timeline.
 
 ### Integration Testing
 

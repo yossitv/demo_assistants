@@ -14,7 +14,7 @@ npm test -- --testPathPattern="sse|bearer|streaming|SSEChunk" --passWithNoTests 
 
 echo ""
 echo "✓ Checking CDK configuration..."
-grep -A 5 "chatStreamLambda\|TEST_API_KEY\|timeout.*180" infrastructure/lib/rag-chat-stream-backend-stack.ts | head -15
+grep -A 5 "chatStreamLambda\|RAG_STREAM_API_KEY\|EXPECTED_API_KEY\|timeout.*180" infrastructure/lib/rag-chat-stream-backend-stack.ts | head -15
 
 echo ""
 echo "✓ Build check..."

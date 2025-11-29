@@ -50,10 +50,13 @@ const validateBearerToken = (headers, logger, options = {}) => {
         logger?.warn('Missing or malformed Authorization header', logMeta);
         throw new errors_1.AuthenticationError('Unauthorized');
     }
-    const expectedToken = options.expectedToken ?? process.env.TAUVS_API_KEY;
+    const expectedToken = options.expectedToken
+        ?? process.env.EXPECTED_API_KEY
+        ?? process.env.TAUVS_API_KEY
+        ?? process.env.RAG_STREAM_API_KEY;
     if (!expectedToken) {
-        logger?.error('TAUVS_API_KEY is not configured', undefined, logMeta);
-        throw new errors_1.InternalError('TAUVS_API_KEY is not configured');
+        logger?.error('EXPECTED_API_KEY is not configured', undefined, logMeta);
+        throw new errors_1.InternalError('EXPECTED_API_KEY is not configured');
     }
     if (token !== expectedToken) {
         logger?.warn('Bearer token mismatch', logMeta);
