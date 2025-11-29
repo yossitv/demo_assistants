@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-deploy-role-381492091301-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-cfn-exec-role-381492091301-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-381492091301-us-east-1/50d2c55f09e538afc641e2adf6b03baf59da381e88b382f4330429f5d5ef0459.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-381492091301-us-east-1/f70fe5b4aef48a70a59c403f65ef4241e68bb3d3ab7c71232b1dc782bcb538d4.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -127,7 +127,7 @@
         "/RagStreamAPI/RagChatApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "RagChatApiDeployment4390754182eecb7ff9f7bafce50b88892e4abbf3"
+            "data": "RagChatApiDeployment439075414e9352dabe0f29c101169b2c1c4194b1"
           }
         ],
         "/RagStreamAPI/RagChatApi/DeploymentStage.prod/Resource": [
@@ -524,12 +524,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ConversationsTableName"
-          }
-        ],
-        "/RagStreamAPI/RagStreamApiKeyValue": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RagStreamApiKeyValue"
           }
         ],
         "/RagStreamAPI/CDKMetadata/Default": [

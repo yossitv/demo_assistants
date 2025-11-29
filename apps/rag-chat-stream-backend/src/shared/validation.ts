@@ -27,7 +27,8 @@ export const chatRequestSchema = z.object({
   model: z.string().min(1, 'model is required'),
   messages: z.array(chatMessageSchema)
     .nonempty('messages must include at least one entry')
-    .refine(msgs => msgs.some(m => m.role === 'user'), 'messages must include a user message')
+    .refine(msgs => msgs.some(m => m.role === 'user'), 'messages must include a user message'),
+  stream: z.boolean().optional().default(false)
 });
 
 export type KnowledgeCreateBody = z.infer<typeof knowledgeCreateSchema>;

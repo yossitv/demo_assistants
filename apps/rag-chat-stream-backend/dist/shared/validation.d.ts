@@ -49,6 +49,7 @@ export declare const chatRequestSchema: z.ZodObject<{
         role: "system" | "user" | "assistant";
         content: string;
     }[]]>;
+    stream: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
     model: string;
     messages: [{
@@ -58,6 +59,7 @@ export declare const chatRequestSchema: z.ZodObject<{
         role: "system" | "user" | "assistant";
         content: string;
     }[]];
+    stream: boolean;
 }, {
     model: string;
     messages: [{
@@ -67,6 +69,7 @@ export declare const chatRequestSchema: z.ZodObject<{
         role: "system" | "user" | "assistant";
         content: string;
     }[]];
+    stream?: boolean | undefined;
 }>;
 export type KnowledgeCreateBody = z.infer<typeof knowledgeCreateSchema>;
 export type AgentCreateBody = z.infer<typeof agentCreateSchema>;

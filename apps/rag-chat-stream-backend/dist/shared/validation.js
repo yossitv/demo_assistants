@@ -22,7 +22,8 @@ exports.chatRequestSchema = zod_1.z.object({
     model: zod_1.z.string().min(1, 'model is required'),
     messages: zod_1.z.array(chatMessageSchema)
         .nonempty('messages must include at least one entry')
-        .refine(msgs => msgs.some(m => m.role === 'user'), 'messages must include a user message')
+        .refine(msgs => msgs.some(m => m.role === 'user'), 'messages must include a user message'),
+    stream: zod_1.z.boolean().optional().default(false)
 });
 const parseJsonBody = (body) => {
     try {

@@ -33,6 +33,7 @@ class ChatCompletionsStreamController {
             }
             const { tenantId, userId, authMethod } = authContext;
             const validatedBody = (0, validation_1.validateChatRequestBody)(event.body);
+            const isStreaming = validatedBody.stream === true;
             if (this.structuredLogger) {
                 this.structuredLogger.logRequest({
                     requestId,
@@ -58,6 +59,32 @@ class ChatCompletionsStreamController {
                 messages: validatedBody.messages,
                 requestId
             });
+            if (!isStreaming) {
+                this.writeJsonSuccess(responseStream, result);
+                const durationMs = Date.now() - startTime;
+                if (this.structuredLogger) {
+                    this.structuredLogger.logResponse({
+                        requestId,
+                        tenantId,
+                        userId,
+                        path: event.path,
+                        statusCode: 200,
+                        durationMs,
+                        authMethod
+                    });
+                }
+                this.logger.info('Non-streaming chat request completed', {
+                    tenantId,
+                    userId,
+                    requestId,
+                    agentId: validatedBody.model,
+                    citedUrlCount: result.choices[0]?.message?.cited_urls?.length || 0,
+                    conversationId: result.id,
+                    durationMs,
+                    authMethod
+                });
+                return;
+            }
             const stream = this.createSSEStream(responseStream);
             this.streamCompletion(stream, result);
             const durationMs = Date.now() - startTime;
@@ -138,6 +165,17 @@ class ChatCompletionsStreamController {
             }
         });
         stream.write(JSON.stringify({ error: { message } }));
+        stream.end();
+    }
+    writeJsonSuccess(responseStream, body) {
+        const stream = awslambda.HttpResponseStream.from(responseStream, {
+            statusCode: 200,
+            headers: {
+                ...cors_1.CORS_HEADERS,
+                'Content-Type': 'application/json'
+            }
+        });
+        stream.write(JSON.stringify(body));
         stream.end();
     }
     streamCompletion(stream, result) {

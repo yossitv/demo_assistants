@@ -9,6 +9,7 @@ export declare class ChatCompletionsStreamController {
     handle(event: APIGatewayProxyEvent, responseStream: awslambda.HttpResponseStream): Promise<void>;
     private createSSEStream;
     private writeJsonError;
+    private writeJsonSuccess;
     private streamCompletion;
     private chunkContent;
     private extractAuthenticationContext;

@@ -212,9 +212,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/knowledgeCreate.handler",
@@ -266,9 +266,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/knowledgeList.handler",
@@ -320,9 +320,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/agentCreate.handler",
@@ -374,9 +374,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/chat.handler",
@@ -428,9 +428,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/chatCompletionsStreamHandler.handler",
@@ -516,9 +516,9 @@
       "SIMILARITY_THRESHOLD": "0.35",
       "TOP_K": "8",
       "MAX_CITED_URLS": "3",
-      "EXPECTED_API_KEY": "example-test-api-key-12345123451234512345",
-      "TAUVS_API_KEY": "example-test-api-key-12345123451234512345",
-      "RAG_STREAM_API_KEY": "example-test-api-key-12345123451234512345"
+      "EXPECTED_API_KEY": "dev-stream-key-1234567890",
+      "TAUVS_API_KEY": "dev-stream-key-1234567890",
+      "RAG_STREAM_API_KEY": "dev-stream-key-1234567890"
      }
     },
     "Handler": "handlers/apiKeyAuthorizer.handler",
@@ -595,7 +595,7 @@
     "aws:cdk:path": "RagStreamAPI/RagChatApi/Resource"
    }
   },
-  "RagChatApiDeployment4390754182eecb7ff9f7bafce50b88892e4abbf3": {
+  "RagChatApiDeployment439075414e9352dabe0f29c101169b2c1c4194b1": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "OpenAI-compatible RAG chat API with streaming support",
@@ -650,7 +650,7 @@
      "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"userAgent\":\"$context.identity.userAgent\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\",\"error\":\"$context.error.message\",\"integrationStatus\":\"$context.integrationStatus\",\"apiId\":\"$context.apiId\",\"authorizer\":\"$context.authorizer.principalId\"}"
     },
     "DeploymentId": {
-     "Ref": "RagChatApiDeployment4390754182eecb7ff9f7bafce50b88892e4abbf3"
+     "Ref": "RagChatApiDeployment439075414e9352dabe0f29c101169b2c1c4194b1"
     },
     "MethodSettings": [
      {
@@ -1486,7 +1486,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "ChatFunction3D7C447E",
+      "ChatStreamFunction0E124B9B",
       "Arn"
      ]
     },
@@ -1518,7 +1518,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "ChatFunction3D7C447E",
+      "ChatStreamFunction0E124B9B",
       "Arn"
      ]
     },
@@ -1551,19 +1551,20 @@
     "HttpMethod": "POST",
     "Integration": {
      "IntegrationHttpMethod": "POST",
+     "ResponseTransferMode": "STREAM",
      "Type": "AWS_PROXY",
      "Uri": {
       "Fn::Join": [
        "",
        [
-        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        "arn:aws:apigateway:us-east-1:lambda:path/2021-11-15/functions/",
         {
          "Fn::GetAtt": [
-          "ChatFunction3D7C447E",
+          "ChatStreamFunction0E124B9B",
           "Arn"
          ]
         },
-        "/invocations"
+        "/response-streaming-invocations"
        ]
       ]
      }
@@ -1742,7 +1743,7 @@
    "Properties": {
     "Description": "API Key for Lambda endpoint access",
     "Enabled": true,
-    "Name": "rag-stream-api-key-RagStreamAPIRagChatApiC342348C",
+    "Name": "rag-stream-api-key-1764422083",
     "StageKeys": [
      {
       "RestApiId": {
@@ -1753,7 +1754,7 @@
       }
      }
     ],
-    "Value": "example-test-api-key-12345123451234512345"
+    "Value": "dev-stream-key-1234567890"
    },
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/RagChatApi/LambdaApiKeyV2/Resource"
@@ -2748,10 +2749,6 @@
    "Value": {
     "Ref": "ConversationsTableCD91EB96"
    }
-  },
-  "RagStreamApiKeyValue": {
-   "Description": "API Key value for Lambda authentication (from RAG_STREAM_API_KEY env var)",
-   "Value": "example-test-api-key-12345123451234512345"
   }
  },
  "Parameters": {

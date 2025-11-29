@@ -311,7 +311,9 @@ export class RagChatStreamBackendStack extends cdk.Stack {
     const chat = v1.addResource('chat');
 
     const chatCompletions = chat.addResource('completions');
-    chatCompletions.addMethod('POST', new apigateway.LambdaIntegration(chatLambda), {
+    chatCompletions.addMethod('POST', new apigateway.LambdaIntegration(chatStreamLambda, {
+      responseTransferMode: apigateway.ResponseTransferMode.STREAM,
+    }), {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       authorizer: apiKeyAuthorizer,
       apiKeyRequired: false,
