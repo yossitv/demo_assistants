@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-deploy-role-381492091301-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::381492091301:role/cdk-hnb659fds-cfn-exec-role-381492091301-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-381492091301-us-east-1/68a10a50845a07f5f41a39993736b695e53c0863f4e72d9ec42516d1bd14f515.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-381492091301-us-east-1/0159e63575d9dcba59a0fc384e8393156a831250bbaa0cf177f9a357edd5dbe3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -88,6 +88,12 @@
             "data": "ChatFunction3D7C447E"
           }
         ],
+        "/RagChatBackendStack/ChatStreamFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatStreamFunction0E124B9B"
+          }
+        ],
         "/RagChatBackendStack/ApiKeyAuthorizerRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -145,7 +151,7 @@
         "/RagChatBackendStack/RagChatApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "RagChatApiDeployment439075414dcf88b11f6322966bf0d778ca0e7f1c"
+            "data": "RagChatApiDeployment43907541bbd2062098bda086171e61a79d03edf2"
           }
         ],
         "/RagChatBackendStack/RagChatApi/DeploymentStage.prod/Resource": [

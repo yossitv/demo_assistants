@@ -36,6 +36,7 @@ import { KnowledgeCreateController } from '../../adapters/controllers/KnowledgeC
 import { KnowledgeListController } from '../../adapters/controllers/KnowledgeListController';
 import { AgentCreateController } from '../../adapters/controllers/AgentCreateController';
 import { ChatController } from '../../adapters/controllers/ChatController';
+import { ChatCompletionsStreamController } from '../../adapters/controllers/ChatCompletionsStreamController';
 
 /**
  * Dependency Injection Container
@@ -227,5 +228,20 @@ export class DIContainer {
    */
   getChatController(): ChatController {
     return this.chatController;
+  }
+
+  private chatCompletionsStreamController?: ChatCompletionsStreamController;
+
+  /**
+   * Get ChatCompletionsStreamController instance
+   */
+  getChatCompletionsStreamController(): ChatCompletionsStreamController {
+    if (!this.chatCompletionsStreamController) {
+      this.chatCompletionsStreamController = new ChatCompletionsStreamController(
+        this.chatWithAgentUseCase,
+        this.logger
+      );
+    }
+    return this.chatCompletionsStreamController!;
   }
 }

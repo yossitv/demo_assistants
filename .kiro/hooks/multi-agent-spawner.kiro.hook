@@ -1,15 +1,15 @@
 {
   "enabled": true,
   "name": "Multi-Agent Environment Spawner",
-  "description": "Automatically constructs a multi-agent environment at agent startup using tmux-mcp.",
+  "description": "On agentSpawn, create a tmux session and spawn orchestrator / engineer / reviewer agents in panes based on the spec JSON.",
   "version": "1",
   "when": {
     "type": "agentSpawn"
   },
   "then": {
     "type": "exec",
-    "command": "./hooks/spawn_multi_agent.sh",
-    "args": [],
+    "command": "bash",
+    "args": [".kiro/hooks/spawn_multi_agent.sh"],
     "timeout_ms": 60000
   }
 }

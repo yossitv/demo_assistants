@@ -27,6 +27,7 @@ const KnowledgeCreateController_1 = require("../../adapters/controllers/Knowledg
 const KnowledgeListController_1 = require("../../adapters/controllers/KnowledgeListController");
 const AgentCreateController_1 = require("../../adapters/controllers/AgentCreateController");
 const ChatController_1 = require("../../adapters/controllers/ChatController");
+const ChatCompletionsStreamController_1 = require("../../adapters/controllers/ChatCompletionsStreamController");
 /**
  * Dependency Injection Container
  *
@@ -134,6 +135,16 @@ class DIContainer {
      */
     getChatController() {
         return this.chatController;
+    }
+    chatCompletionsStreamController;
+    /**
+     * Get ChatCompletionsStreamController instance
+     */
+    getChatCompletionsStreamController() {
+        if (!this.chatCompletionsStreamController) {
+            this.chatCompletionsStreamController = new ChatCompletionsStreamController_1.ChatCompletionsStreamController(this.chatWithAgentUseCase, this.logger);
+        }
+        return this.chatCompletionsStreamController;
     }
 }
 exports.DIContainer = DIContainer;

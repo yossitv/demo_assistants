@@ -190,7 +190,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81.zip"
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
     },
     "Environment": {
      "Variables": {
@@ -232,7 +232,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagChatBackendStack/KnowledgeCreateFunction/Resource",
-    "aws:asset:path": "asset.eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -242,7 +242,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81.zip"
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
     },
     "Environment": {
      "Variables": {
@@ -284,7 +284,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagChatBackendStack/KnowledgeListFunction/Resource",
-    "aws:asset:path": "asset.eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -294,7 +294,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81.zip"
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
     },
     "Environment": {
      "Variables": {
@@ -336,7 +336,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagChatBackendStack/AgentCreateFunction/Resource",
-    "aws:asset:path": "asset.eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -346,7 +346,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81.zip"
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
     },
     "Environment": {
      "Variables": {
@@ -388,7 +388,59 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagChatBackendStack/ChatFunction/Resource",
-    "aws:asset:path": "asset.eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChatStreamFunction0E124B9B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AGENTS_TABLE_NAME": {
+       "Ref": "AgentsTable78E0948F"
+      },
+      "KNOWLEDGE_SPACES_TABLE_NAME": {
+       "Ref": "KnowledgeSpacesTable2841007C"
+      },
+      "CONVERSATIONS_TABLE_NAME": {
+       "Ref": "ConversationsTableCD91EB96"
+      },
+      "OPENAI_API_KEY": "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",
+      "QDRANT_URL": "https://eae23d59-8e72-4a96-af53-e6763a27c1f5.us-west-2-0.aws.cloud.qdrant.io",
+      "QDRANT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.GIdAAQ6hrzYi2VgVLqfCLBorhLLFXI75CxAB3g_XEcc",
+      "EMBEDDING_MODEL": "text-embedding-3-small",
+      "LLM_MODEL": "gpt-4o",
+      "LOG_LEVEL": "INFO",
+      "SIMILARITY_THRESHOLD": "0.35",
+      "TOP_K": "8",
+      "MAX_CITED_URLS": "3",
+      "TAVUS_API_KEY": "example-test-api-key-12345"
+     }
+    },
+    "Handler": "handlers/chatCompletionsStreamHandler.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 180
+   },
+   "DependsOn": [
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RagChatBackendStack/ChatStreamFunction/Resource",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -432,7 +484,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81.zip"
+     "S3Key": "293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f.zip"
     },
     "Environment": {
      "Variables": {
@@ -473,7 +525,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagChatBackendStack/ApiKeyAuthorizerFunction/Resource",
-    "aws:asset:path": "asset.eb75fa31c37e2213c0e2148d49bfc827058ee1df469b09464bc265f2e1a78c81",
+    "aws:asset:path": "asset.293eb1d5f66c0ca01a73f8f40a98a07cb416caa5bc8a0dd093cf7732f25ab70f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -629,7 +681,7 @@
     "aws:cdk:path": "RagChatBackendStack/RagChatApi/Resource"
    }
   },
-  "RagChatApiDeployment439075414dcf88b11f6322966bf0d778ca0e7f1c": {
+  "RagChatApiDeployment43907541bbd2062098bda086171e61a79d03edf2": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "OpenAI-compatible RAG chat API with knowledge management",
@@ -681,7 +733,7 @@
      "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"userAgent\":\"$context.identity.userAgent\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\",\"error\":\"$context.error.message\",\"integrationStatus\":\"$context.integrationStatus\",\"apiId\":\"$context.apiId\",\"authorizer\":\"$context.authorizer.principalId\"}"
     },
     "DeploymentId": {
-     "Ref": "RagChatApiDeployment439075414dcf88b11f6322966bf0d778ca0e7f1c"
+     "Ref": "RagChatApiDeployment43907541bbd2062098bda086171e61a79d03edf2"
     },
     "MethodSettings": [
      {
@@ -1517,7 +1569,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "ChatFunction3D7C447E",
+      "ChatStreamFunction0E124B9B",
       "Arn"
      ]
     },
@@ -1549,7 +1601,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "ChatFunction3D7C447E",
+      "ChatStreamFunction0E124B9B",
       "Arn"
      ]
     },
@@ -1582,19 +1634,20 @@
     "HttpMethod": "POST",
     "Integration": {
      "IntegrationHttpMethod": "POST",
+     "ResponseTransferMode": "STREAM",
      "Type": "AWS_PROXY",
      "Uri": {
       "Fn::Join": [
        "",
        [
-        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        "arn:aws:apigateway:us-east-1:lambda:path/2021-11-15/functions/",
         {
          "Fn::GetAtt": [
-          "ChatFunction3D7C447E",
+          "ChatStreamFunction0E124B9B",
           "Arn"
          ]
         },
-        "/invocations"
+        "/response-streaming-invocations"
        ]
       ]
      }

@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Log User Prompts",
+  "description": "Log all user prompts (especially to orchestrators) into events.jsonl for later analysis.",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "exec",
+    "command": "bash",
+    "args": [".kiro/hooks/log_user_prompt.sh"],
+    "timeout_ms": 30000
+  }
+}

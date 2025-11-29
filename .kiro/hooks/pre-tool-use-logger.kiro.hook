@@ -1,14 +1,15 @@
 {
   "enabled": true,
   "name": "Pre-Tool Use Logger & Safety Validator",
-  "description": "Logs task_start events to a JSONL file and validates tool safety before execution. Blocks dangerous operations like writing to /etc, deleting files, or running rm -rf commands.",
+  "description": "Log task_start events and block obviously dangerous operations before the tool runs.",
   "version": "1",
   "when": {
-    "type": "fileEdited",
-    "patterns": []
+    "type": "preToolUse"
   },
   "then": {
-    "type": "runCommand",
-    "command": "#!/bin/bash\n\n# Read environment variables\nAGENT_ID=\"${AGENT_ID:-unknown}\"\nLOG_DIR=\"${LOG_DIR:-.}\"\nTOOL_NAME=\"${TOOL_NAME}\"\nTOOL_INPUT=\"${TOOL_INPUT}\"\n\n# Create log directory if it doesn't exist\nmkdir -p \"$LOG_DIR\"\n\n# Generate ISO8601 timestamp\nTIMESTAMP=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\n\n# Create JSONL entry\nLOG_ENTRY=$(cat <<EOF\n{\"timestamp\":\"$TIMESTAMP\",\"event\":\"task_start\",\"agent_id\":\"$AGENT_ID\",\"tool_name\":\"$TOOL_NAME\",\"tool_input\":$TOOL_INPUT}\nEOF\n)\n\n# Append to events.jsonl\necho \"$LOG_ENTRY\" >> \"$LOG_DIR/events.jsonl\"\n\n# Safety validation\n# Check for dangerous operations\nif [[ \"$TOOL_NAME\" == *\"write\"* ]] || [[ \"$TOOL_NAME\" == *\"delete\"* ]] || [[ \"$TOOL_NAME\" == *\"remove\"* ]]; then\n  # Check tool input for dangerous patterns\n  if echo \"$TOOL_INPUT\" | grep -qE '(/etc/|rm -rf|rm -fr|sudo rm|del /s|format|mkfs)'; then\n    echo \"ERROR: Dangerous operation detected. Tool execution blocked for safety.\" >&2\n    exit 2\n  fi\nfi\n\n# Check for direct dangerous commands in tool name\nif echo \"$TOOL_NAME\" | grep -qE '(rm|delete|format|mkfs)'; then\n  if echo \"$TOOL_INPUT\" | grep -qE '(-rf|-fr|/etc/|--recursive|--force)'; then\n    echo \"ERROR: Dangerous operation detected. Tool execution blocked for safety.\" >&2\n    exit 2\n  fi\nfi\n\n# All checks passed\nexit 0"
+    "type": "exec",
+    "command": "bash",
+    "args": [".kiro/hooks/log_pre_tool.sh"],
+    "timeout_ms": 30000
   }
 }

@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Multi-Agent Completion Check",
+  "description": "On stop, check spec.tasks completion and kill the multi-agent tmux session when all tasks are done.",
+  "version": "1",
+  "when": {
+    "type": "stop"
+  },
+  "then": {
+    "type": "exec",
+    "command": "bash",
+    "args": [".kiro/hooks/check_completion.sh"],
+    "timeout_ms": 30000
+  }
+}

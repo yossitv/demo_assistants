@@ -116,6 +116,16 @@ export class RagChatBackendStack extends cdk.Stack {
       memorySize: 1024,
     });
 
+    const chatStreamLambda = new lambda.Function(this, 'ChatStreamFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handlers/chatCompletionsStreamHandler.handler',
+      code: lambda.Code.fromAsset(lambdaAssetPath),
+      environment: lambdaEnvironment,
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(180), // 3 minutes for streaming
+      memorySize: 1024,
+    });
+
     // API Key Authorizer Lambda Function
     const apiKeyAuthorizerLambda = new lambda.Function(this, 'ApiKeyAuthorizerFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -297,7 +307,10 @@ export class RagChatBackendStack extends cdk.Stack {
     const chat = v1.addResource('chat');
 
     const chatCompletions = chat.addResource('completions');
-    chatCompletions.addMethod('POST', new apigateway.LambdaIntegration(chatLambda), {
+    // Single endpoint handles both streaming (stream: true) and non-streaming (stream: false)
+    chatCompletions.addMethod('POST', new apigateway.LambdaIntegration(chatStreamLambda, {
+      responseTransferMode: apigateway.ResponseTransferMode.STREAM,
+    }), {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       authorizer: apiKeyAuthorizer,
       apiKeyRequired: false,
