@@ -29,8 +29,8 @@ The design leverages the existing `apps/rag-chat-stream-backend` and `apps/rag-c
 │           │                     │                            │
 └───────────┼─────────────────────┼────────────────────────────┘
             │                     │
-            │ POST /knowledge-    │ POST /v1/chat/completions
-            │ spaces (multipart)  │ (SSE stream)
+            │ POST /v1/knowledge/ │ POST /v1/chat/completions
+            │ create (multipart)  │ (SSE stream)
             │                     │
 ┌───────────▼─────────────────────▼────────────────────────────┐
 │              Backend (Lambda + API Gateway)                   │
@@ -57,7 +57,7 @@ The design leverages the existing `apps/rag-chat-stream-backend` and `apps/rag-c
 **Upload Flow:**
 1. User selects Markdown file in frontend
 2. Frontend validates file (size, extension)
-3. Frontend sends multipart/form-data to `/knowledge-spaces`
+3. Frontend sends multipart/form-data to `/v1/knowledge/create`
 4. Backend parses Markdown using delimiter-based parsing
 5. Backend generates embeddings for each product
 6. Backend stores vectors in Qdrant with namespace `tenantId#knowledgeSpaceId`
@@ -114,8 +114,13 @@ interface ParseError {
 
 **Parsing Logic**:
 - Split content by `--- item start ---` and `--- item end ---`
-- For each block, extract lines matching `key: value` pattern
-- Handle special formats: `tags: [a, b, c]` → string array
+- For each block:
+  - Extract single-line fields matching `key: value` pattern
+  - For `description` field: Support both formats with priority rule
+    - **Priority**: If `### description` block exists, use that content (multi-line)
+    - **Fallback**: If no block, use `description: value` line (single-line)
+    - Block format: Capture all lines after `### description` until next `###` or `---` marker
+  - Handle special formats: `tags: [a, b, c]` → string array
 - Truncate name (200 chars) and description (2000 chars)
 - Skip items missing required fields, record error
 - Generate UUID for items without `id` field
@@ -123,6 +128,9 @@ interface ParseError {
 #### 2. Knowledge Space Controller Extension
 
 **Location**: `apps/rag-chat-stream-backend/src/adapters/controllers/KnowledgeCreateController.ts`
+
+**API Design Decision**:
+We will extend the existing `/v1/knowledge/create` endpoint to support multipart/form-data for file uploads, maintaining API compatibility while adding new functionality. This approach minimizes code changes and keeps the API surface consistent.
 
 **Changes**:
 - Accept `multipart/form-data` in addition to JSON
@@ -275,11 +283,39 @@ interface ProductCardProps {
 - Render ProductCard components for detected products
 - Maintain existing message display for non-product content
 
+**LLM Response Format Contract**:
+
+The recommendation agent should include product data in a structured JSON block at the end of its natural language response. This contract ensures consistent parsing between LLM output and frontend display.
+
+**Expected Format**:
+```
+[Natural language explanation of recommendations]
+
+```json
+{
+  "products": [
+    {
+      "id": "prod-001",
+      "name": "Product Name",
+      "description": "Product description",
+      "price": 99.99,
+      "currency": "USD",
+      "category": "Electronics",
+      "imageUrl": "https://...",
+      "productUrl": "https://...",
+      "brand": "Brand Name",
+      "availability": "in_stock"
+    }
+  ]
+}
+```
+```
+
 **Product Detection Logic**:
 ```typescript
 function extractProducts(message: string): Product[] {
-  // Look for JSON blocks or structured product data
-  // Pattern: ```json\n{...}\n``` or specific markers
+  // Look for JSON blocks with product data
+  // Pattern: ```json\n{...}\n```
   const jsonBlocks = message.match(/```json\n([\s\S]*?)\n```/g);
   
   return jsonBlocks
@@ -294,6 +330,22 @@ function extractProducts(message: string): Product[] {
     .flat()
     .filter(Boolean) || [];
 }
+```
+
+**System Prompt Addition**:
+The product recommendation agent's system prompt should include:
+```
+When recommending products, include a JSON block at the end of your response:
+
+```json
+{
+  "products": [
+    { "id": "...", "name": "...", "description": "...", "price": ..., ... }
+  ]
+}
+```
+
+This JSON should contain all relevant product details from the knowledge base.
 ```
 
 #### 4. Knowledge Space List Extension
@@ -428,11 +480,13 @@ interface ProductChunkMetadata {
 ### Markdown Format Specification
 
 **Input Format**:
+
+**Option A: Single-line description (simpler parsing)**
 ```markdown
 --- item start ---
 id: prod-001
 name: Wireless Bluetooth Headphones
-description: Premium over-ear headphones with active noise cancellation and 30-hour battery life
+description: Premium over-ear headphones with active noise cancellation
 category: Electronics
 price: 199.99
 currency: USD
@@ -442,33 +496,71 @@ imageUrl: https://example.com/images/headphones.jpg
 productUrl: https://example.com/products/headphones
 brand: AudioTech
 --- item end ---
+```
 
+**Option B: Block-style description (recommended for real product data)**
+```markdown
 --- item start ---
-name: Organic Cotton T-Shirt
-description: Comfortable and sustainable t-shirt made from 100% organic cotton
-category: Clothing
-price: 29.99
+id: prod-001
+name: Wireless Bluetooth Headphones
+category: Electronics
+price: 199.99
 currency: USD
 availability: in_stock
-tags: [clothing, organic, sustainable]
-brand: EcoWear
+tags: [audio, wireless, noise-cancelling]
+imageUrl: https://example.com/images/headphones.jpg
+productUrl: https://example.com/products/headphones
+brand: AudioTech
+### description
+Premium over-ear headphones with active noise cancellation and 30-hour battery life.
+Perfect for travel, work, or relaxation. Features include:
+- Active noise cancellation
+- 30-hour battery life
+- Comfortable ear cushions
+- Bluetooth 5.0 connectivity
 --- item end ---
 ```
 
 **Parsing Rules**:
 1. Items are delimited by `--- item start ---` and `--- item end ---`
-2. Each line within an item follows `key: value` format
-3. Tags use array notation: `tags: [tag1, tag2, tag3]`
-4. Whitespace around keys and values is trimmed
-5. Empty lines are ignored
-6. Lines without `:` separator are ignored
-7. If `id` is missing, generate UUID
-8. If `name` or `description` is missing, skip item and record error
+2. Single-line fields follow `key: value` format
+3. Block fields (description) use `### fieldname` marker followed by multi-line content
+4. **Description priority**: `### description` block takes precedence over `description:` line if both exist
+5. Tags use array notation: `tags: [tag1, tag2, tag3]`
+6. Whitespace around keys and values is trimmed
+7. Empty lines are ignored
+8. Lines without `:` separator (except block content) are ignored
+9. If `id` is missing, generate UUID
+10. If `name` or `description` is missing, skip item and record error
+
+**Design Decision**: We recommend **Option B (block-style)** for v1 implementation as it better accommodates real-world product descriptions which are typically multi-paragraph. The parser supports both formats with block-style taking priority when present.
 
 ## Correctness Properties
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
+### Property Testing Priority
+
+Properties are categorized by implementation priority:
+
+**Must Have (P0)**: Core functionality that must work correctly for the feature to be viable
+- Parsing logic (Properties 5-9)
+- Knowledge Space creation and metadata (Properties 10-14)
+- Streaming completion handling (Property 21)
+- Product card placeholder handling (Property 28)
+- Partial failure handling (Properties 43-44)
+
+**Should Have (P1)**: Important for production quality but can be implemented after core functionality
+- File validation (Properties 1-4)
+- Agent preset behavior (Properties 15-18)
+- Streaming controls (Properties 19-20, 22-23)
+- Product display (Properties 24-27)
+- Schema validation (Properties 34-38)
+
+**Nice to Have (P2)**: Quality-of-life improvements and edge case handling
+- UI feedback details (Properties 39-42)
+- Error recovery specifics (Properties 45-47)
+- Knowledge Space management UI (Properties 29-33)
 
 ### File Upload and Validation Properties
 
@@ -477,7 +569,7 @@ Property 1: File validation rejects invalid files
 **Validates: Requirements 1.1**
 
 Property 2: Valid file upload triggers API call
-*For any* valid Markdown file (correct extension, size ≤ 10MB), uploading should result in a POST request to `/knowledge-spaces` with multipart/form-data content type
+*For any* valid Markdown file (correct extension, size ≤ 10MB), uploading should result in a POST request to `/v1/knowledge/create` with multipart/form-data content type
 **Validates: Requirements 1.2**
 
 Property 3: Upload success displays summary
@@ -1151,11 +1243,11 @@ logger.error('Embedding failed', {
 
 ### API Documentation
 
-**New Endpoint**: `POST /knowledge-spaces` (multipart support)
+**Extended Endpoint**: `POST /v1/knowledge/create` (multipart support added)
 
 ```
-POST /knowledge-spaces
-Content-Type: multipart/form-data
+POST /v1/knowledge/create
+Content-Type: multipart/form-data (new) or application/json (existing)
 
 Parameters:
 - name: string (required) - Knowledge Space name
@@ -1283,12 +1375,12 @@ brand: Brand Name (optional)
 - Jest + fast-check for testing
 
 **Frontend**:
-- Next.js 14.x
-- React 18.x
+- Next.js 16.x
+- React 19.x
 - TypeScript 5.x
-- Tailwind CSS for styling
+- Tailwind CSS 4.x for styling
 - Jest + React Testing Library
-- @fast-check/jest for property testing
+- fast-check for property testing
 
 ### Glossary
 
@@ -1300,6 +1392,16 @@ brand: Brand Name (optional)
 - **SSE**: Server-Sent Events, a protocol for server-to-client streaming
 - **Strict RAG**: Mode where agent responses are strictly based on retrieved context
 - **Tenant**: An isolated customer/organization in the multi-tenant system
+
+### Key Design Decisions Summary
+
+1. **API Endpoint Strategy**: Extend existing `/v1/knowledge/create` endpoint with multipart/form-data support rather than creating a new endpoint. This maintains API compatibility and minimizes code changes.
+
+2. **Markdown Description Format**: Use block-style format with `### description` marker to support multi-line product descriptions. This better accommodates real-world product data which typically includes detailed, multi-paragraph descriptions.
+
+3. **LLM Response Contract**: Establish explicit JSON format contract for product recommendations. The LLM includes a ```json code block at the end of natural language responses, containing structured product data that the frontend can reliably parse.
+
+4. **Property Testing Priority**: Categorize correctness properties into P0 (Must Have), P1 (Should Have), and P2 (Nice to Have) to guide implementation scheduling and ensure core functionality is solid before adding polish.
 
 ### References
 
