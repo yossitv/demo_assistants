@@ -85,6 +85,70 @@ class DynamoDBAgentRepository {
             throw error;
         }
     }
+    async update(agent) {
+        this.logger.info('Updating agent in DynamoDB', {
+            tenantId: agent.tenantId,
+            agentId: agent.agentId,
+            tableName: this.tableName
+        });
+        try {
+            await (0, retry_1.retryWithBackoff)(async () => {
+                await this.dynamoDB.send(new lib_dynamodb_1.PutCommand({
+                    TableName: this.tableName,
+                    Item: {
+                        tenantId: agent.tenantId,
+                        agentId: agent.agentId,
+                        name: agent.name,
+                        description: agent.description,
+                        knowledgeSpaceIds: agent.knowledgeSpaceIds,
+                        strictRAG: agent.strictRAG,
+                        systemPrompt: agent.systemPrompt,
+                        preset: agent.preset,
+                        createdAt: agent.createdAt.toISOString()
+                    }
+                }));
+            }, { logger: this.logger });
+            this.logger.info('Successfully updated agent in DynamoDB', {
+                tenantId: agent.tenantId,
+                agentId: agent.agentId
+            });
+        }
+        catch (error) {
+            this.logger.error('Failed to update agent in DynamoDB', error instanceof Error ? error : new Error(String(error)), {
+                tenantId: agent.tenantId,
+                agentId: agent.agentId,
+                tableName: this.tableName
+            });
+            throw error;
+        }
+    }
+    async delete(tenantId, agentId) {
+        this.logger.info('Deleting agent from DynamoDB', {
+            tenantId,
+            agentId,
+            tableName: this.tableName
+        });
+        try {
+            await (0, retry_1.retryWithBackoff)(async () => {
+                await this.dynamoDB.send(new lib_dynamodb_1.DeleteCommand({
+                    TableName: this.tableName,
+                    Key: { tenantId, agentId }
+                }));
+            }, { logger: this.logger });
+            this.logger.info('Successfully deleted agent from DynamoDB', {
+                tenantId,
+                agentId
+            });
+        }
+        catch (error) {
+            this.logger.error('Failed to delete agent from DynamoDB', error instanceof Error ? error : new Error(String(error)), {
+                tenantId,
+                agentId,
+                tableName: this.tableName
+            });
+            throw error;
+        }
+    }
 }
 exports.DynamoDBAgentRepository = DynamoDBAgentRepository;
 //# sourceMappingURL=DynamoDBAgentRepository.js.map

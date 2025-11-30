@@ -31,5 +31,10 @@ export interface IVectorRepository {
      * @returns Array of search results sorted by similarity score (highest first)
      */
     searchSimilar(namespace: Namespace, queryEmbedding: Embedding, topK: number): Promise<SearchResult[]>;
+    /**
+     * Deletes a collection from the vector database.
+     * @param collectionName - The name of the collection to delete
+     */
+    deleteCollection(collectionName: string): Promise<void>;
 }
 //# sourceMappingURL=IVectorRepository.d.ts.map

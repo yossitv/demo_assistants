@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { IAgentRepository } from '../../domain/repositories/IAgentRepository';
 import { Agent } from '../../domain/entities/Agent';
 import { ILogger } from '../../domain/services/ILogger';
@@ -102,6 +102,88 @@ export class DynamoDBAgentRepository implements IAgentRepository {
     } catch (error) {
       this.logger.error(
         'Failed to find agent in DynamoDB',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          tenantId,
+          agentId,
+          tableName: this.tableName
+        }
+      );
+      throw error;
+    }
+  }
+
+  async update(agent: Agent): Promise<void> {
+    this.logger.info('Updating agent in DynamoDB', {
+      tenantId: agent.tenantId,
+      agentId: agent.agentId,
+      tableName: this.tableName
+    });
+
+    try {
+      await retryWithBackoff(
+        async () => {
+          await this.dynamoDB.send(new PutCommand({
+            TableName: this.tableName,
+            Item: {
+              tenantId: agent.tenantId,
+              agentId: agent.agentId,
+              name: agent.name,
+              description: agent.description,
+              knowledgeSpaceIds: agent.knowledgeSpaceIds,
+              strictRAG: agent.strictRAG,
+              systemPrompt: agent.systemPrompt,
+              preset: agent.preset,
+              createdAt: agent.createdAt.toISOString()
+            }
+          }));
+        },
+        { logger: this.logger }
+      );
+
+      this.logger.info('Successfully updated agent in DynamoDB', {
+        tenantId: agent.tenantId,
+        agentId: agent.agentId
+      });
+    } catch (error) {
+      this.logger.error(
+        'Failed to update agent in DynamoDB',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          tenantId: agent.tenantId,
+          agentId: agent.agentId,
+          tableName: this.tableName
+        }
+      );
+      throw error;
+    }
+  }
+
+  async delete(tenantId: string, agentId: string): Promise<void> {
+    this.logger.info('Deleting agent from DynamoDB', {
+      tenantId,
+      agentId,
+      tableName: this.tableName
+    });
+
+    try {
+      await retryWithBackoff(
+        async () => {
+          await this.dynamoDB.send(new DeleteCommand({
+            TableName: this.tableName,
+            Key: { tenantId, agentId }
+          }));
+        },
+        { logger: this.logger }
+      );
+
+      this.logger.info('Successfully deleted agent from DynamoDB', {
+        tenantId,
+        agentId
+      });
+    } catch (error) {
+      this.logger.error(
+        'Failed to delete agent from DynamoDB',
         error instanceof Error ? error : new Error(String(error)),
         {
           tenantId,

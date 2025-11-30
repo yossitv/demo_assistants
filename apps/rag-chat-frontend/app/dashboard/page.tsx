@@ -30,19 +30,19 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">ダッシュボード</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Dashboard</h1>
           <div className="flex gap-4">
             <Link
               href="/agents/create"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              + エージェント作成
+              + Create Agent
             </Link>
             <Link
               href="/knowledge/create"
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
             >
-              + ナレッジスペース作成
+              + Create Knowledge Space
             </Link>
           </div>
         </div>

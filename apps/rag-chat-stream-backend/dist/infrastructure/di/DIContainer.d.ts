@@ -1,3 +1,7 @@
+import { ILogger } from '../../domain/services/ILogger';
+import { DeleteAgentUseCase } from '../../use-cases/delete-agent.use-case';
+import { UpdateAgentUseCase } from '../../use-cases/update-agent.use-case';
+import { DeleteKnowledgeSpaceUseCase } from '../../use-cases/delete-knowledge-space.use-case';
 import { KnowledgeCreateController } from '../../adapters/controllers/KnowledgeCreateController';
 import { ProductKnowledgeCreateController } from '../../adapters/controllers/ProductKnowledgeCreateController';
 import { KnowledgeListController } from '../../adapters/controllers/KnowledgeListController';
@@ -66,5 +70,21 @@ export declare class DIContainer {
      * Get ChatCompletionsStreamController instance
      */
     getChatCompletionsStreamController(): ChatCompletionsStreamController;
+    /**
+     * Get DeleteAgentUseCase instance
+     */
+    getDeleteAgentUseCase(): DeleteAgentUseCase;
+    /**
+     * Get UpdateAgentUseCase instance
+     */
+    getUpdateAgentUseCase(): UpdateAgentUseCase;
+    /**
+     * Get DeleteKnowledgeSpaceUseCase instance
+     */
+    getDeleteKnowledgeSpaceUseCase(): DeleteKnowledgeSpaceUseCase;
+    /**
+     * Get Logger instance
+     */
+    getLogger(): ILogger;
 }
 //# sourceMappingURL=DIContainer.d.ts.map

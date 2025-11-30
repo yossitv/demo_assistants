@@ -12,5 +12,6 @@ export declare class QdrantVectorRepository implements IVectorRepository {
     upsertChunks(namespace: Namespace, chunks: Chunk[]): Promise<void>;
     searchSimilar(namespace: Namespace, queryEmbedding: Embedding, topK: number): Promise<SearchResult[]>;
     private ensureCollection;
+    deleteCollection(collectionName: string): Promise<void>;
 }
 //# sourceMappingURL=QdrantVectorRepository.d.ts.map

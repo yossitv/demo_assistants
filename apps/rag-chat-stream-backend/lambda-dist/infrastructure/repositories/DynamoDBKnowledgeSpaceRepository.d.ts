@@ -10,5 +10,6 @@ export declare class DynamoDBKnowledgeSpaceRepository implements IKnowledgeSpace
     save(ks: KnowledgeSpace): Promise<void>;
     findByTenant(tenantId: string): Promise<KnowledgeSpace[]>;
     findByTenantAndId(tenantId: string, ksId: string): Promise<KnowledgeSpace | null>;
+    delete(tenantId: string, ksId: string): Promise<void>;
 }
 //# sourceMappingURL=DynamoDBKnowledgeSpaceRepository.d.ts.map

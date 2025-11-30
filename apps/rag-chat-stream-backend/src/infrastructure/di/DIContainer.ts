@@ -33,6 +33,9 @@ import { CreateProductKnowledgeSpaceUseCase } from '../../use-cases/CreateProduc
 import { ListKnowledgeSpacesUseCase } from '../../use-cases/ListKnowledgeSpacesUseCase';
 import { CreateAgentUseCase } from '../../use-cases/CreateAgentUseCase';
 import { ChatWithAgentUseCase } from '../../use-cases/ChatWithAgentUseCase';
+import { DeleteAgentUseCase } from '../../use-cases/delete-agent.use-case';
+import { UpdateAgentUseCase } from '../../use-cases/update-agent.use-case';
+import { DeleteKnowledgeSpaceUseCase } from '../../use-cases/delete-knowledge-space.use-case';
 
 // Controllers
 import { KnowledgeCreateController } from '../../adapters/controllers/KnowledgeCreateController';
@@ -273,5 +276,37 @@ export class DIContainer {
    */
   getChatCompletionsStreamController(): ChatCompletionsStreamController {
     return this.chatCompletionsStreamController;
+  }
+
+  /**
+   * Get DeleteAgentUseCase instance
+   */
+  getDeleteAgentUseCase(): DeleteAgentUseCase {
+    return new DeleteAgentUseCase(this.agentRepo, this.logger);
+  }
+
+  /**
+   * Get UpdateAgentUseCase instance
+   */
+  getUpdateAgentUseCase(): UpdateAgentUseCase {
+    return new UpdateAgentUseCase(this.agentRepo, this.logger);
+  }
+
+  /**
+   * Get DeleteKnowledgeSpaceUseCase instance
+   */
+  getDeleteKnowledgeSpaceUseCase(): DeleteKnowledgeSpaceUseCase {
+    return new DeleteKnowledgeSpaceUseCase(
+      this.knowledgeSpaceRepo,
+      this.vectorRepo,
+      this.logger
+    );
+  }
+
+  /**
+   * Get Logger instance
+   */
+  getLogger(): ILogger {
+    return this.logger;
   }
 }

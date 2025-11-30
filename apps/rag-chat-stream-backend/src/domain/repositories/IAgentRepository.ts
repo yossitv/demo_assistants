@@ -18,4 +18,17 @@ export interface IAgentRepository {
    * @returns The Agent entity if found, null otherwise
    */
   findByTenantAndId(tenantId: string, agentId: string): Promise<Agent | null>;
+
+  /**
+   * Updates an existing Agent entity.
+   * @param agent - The Agent entity with updated data
+   */
+  update(agent: Agent): Promise<void>;
+
+  /**
+   * Deletes an Agent by tenant ID and agent ID.
+   * @param tenantId - The tenant identifier
+   * @param agentId - The agent identifier
+   */
+  delete(tenantId: string, agentId: string): Promise<void>;
 }

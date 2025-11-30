@@ -32,13 +32,13 @@ export function KnowledgeManagementList() {
     setDeleteLoading(true);
     try {
       await deleteKnowledgeSpace(deletingKnowledge.id);
-      setToast({ message: 'ナレッジスペースを削除しました', type: 'success' });
+      setToast({ message: 'Knowledge space deleted', type: 'success' });
       setDeletingKnowledge(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : '削除に失敗しました';
+      const message = err instanceof Error ? err.message : 'Failed to delete';
       // Check if it's a 404 error (API not implemented)
       if (message.includes('404') || message.includes('Not Found')) {
-        setToast({ message: 'バックエンドAPIが未実装です。削除APIを実装してください。', type: 'error' });
+        setToast({ message: 'Backend API not implemented. Please implement delete API.', type: 'error' });
       } else {
         setToast({ message, type: 'error' });
       }
@@ -55,18 +55,18 @@ export function KnowledgeManagementList() {
       const result = await apiClient.getKnowledgeChunks(knowledgeId);
       
       if (result.chunks.length === 0) {
-        setKnowledgeChunks(['⚠️ このナレッジスペースにはチャンクが登録されていません。']);
+        setKnowledgeChunks(['⚠️ No chunks registered in this knowledge space.']);
         return;
       }
 
       const chunksDisplay = result.chunks.map((chunk, idx) => 
-        `【チャンク ${idx + 1}/${result.chunkCount}】\n\n${chunk.content}\n\n---`
+        `【Chunk ${idx + 1}/${result.chunkCount}】\n\n${chunk.content}\n\n---`
       );
       
       setKnowledgeChunks(chunksDisplay);
     } catch (err) {
       console.error('Chunk fetch error:', err);
-      setKnowledgeChunks(['❌ チャンクの取得に失敗しました。']);
+      setKnowledgeChunks(['❌ Failed to fetch chunks.']);
     }
   };
 
@@ -92,13 +92,13 @@ export function KnowledgeManagementList() {
   };
 
   if (loading && knowledgeSpaces.length === 0) {
-    return <div className="text-center py-8">読み込み中...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-        エラー: {error}
+        Error: {error}
       </div>
     );
   }
@@ -106,13 +106,13 @@ export function KnowledgeManagementList() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">ナレッジスペース</h2>
+        <h2 className="text-2xl font-bold">Knowledge Spaces</h2>
         <button
           onClick={refetch}
           disabled={loading}
           className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
         >
-          更新
+          Refresh
         </button>
       </div>
 
@@ -124,19 +124,19 @@ export function KnowledgeManagementList() {
 
       {knowledgeSpaces.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          ナレッジスペースがありません
+          No knowledge spaces found
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">名前</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">タイプ</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ステータス</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ドキュメント数</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">最終更新</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">操作</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Documents</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -165,13 +165,13 @@ export function KnowledgeManagementList() {
                         onClick={() => handleViewChunks(ks.id)}
                         className="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
                       >
-                        データ確認
+                        View Data
                       </button>
                       <button
                         onClick={() => setDeletingKnowledge(ks)}
                         className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
                       >
-                        削除
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -185,12 +185,12 @@ export function KnowledgeManagementList() {
       {selectedKnowledgeId && knowledgeChunks.length > 0 && (
         <div className="mt-6 p-4 bg-gray-50 rounded border border-gray-200">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold">RAGチャンク一覧</h3>
+            <h3 className="text-lg font-semibold">RAG Chunks</h3>
             <button
               onClick={() => setSelectedKnowledgeId(null)}
               className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
             >
-              閉じる
+              Close
             </button>
           </div>
           <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -205,11 +205,11 @@ export function KnowledgeManagementList() {
 
       <DeleteConfirmDialog
         isOpen={!!deletingKnowledge}
-        title="ナレッジスペースの削除"
-        message={`「${deletingKnowledge?.name}」を削除してもよろしいですか？`}
+        title="Delete Knowledge Space"
+        message={`Are you sure you want to delete "${deletingKnowledge?.name}"?`}
         warningMessage={
           deletingKnowledge && getLinkedAgentCount(deletingKnowledge.id) > 0
-            ? `このナレッジスペースは${getLinkedAgentCount(deletingKnowledge.id)}個のエージェントに紐付けられています。`
+            ? `This knowledge space is linked to ${getLinkedAgentCount(deletingKnowledge.id)} agent(s).`
             : undefined
         }
         onConfirm={handleDelete}

@@ -38,4 +38,10 @@ export interface IVectorRepository {
     queryEmbedding: Embedding,
     topK: number
   ): Promise<SearchResult[]>;
+
+  /**
+   * Deletes a collection from the vector database.
+   * @param collectionName - The name of the collection to delete
+   */
+  deleteCollection(collectionName: string): Promise<void>;
 }

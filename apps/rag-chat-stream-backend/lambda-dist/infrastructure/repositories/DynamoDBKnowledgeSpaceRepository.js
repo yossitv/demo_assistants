@@ -116,6 +116,33 @@ class DynamoDBKnowledgeSpaceRepository {
             throw error;
         }
     }
+    async delete(tenantId, ksId) {
+        this.logger.info('Deleting knowledge space from DynamoDB', {
+            tenantId,
+            knowledgeSpaceId: ksId,
+            tableName: this.tableName
+        });
+        try {
+            await (0, retry_1.retryWithBackoff)(async () => {
+                await this.dynamoDB.send(new lib_dynamodb_1.DeleteCommand({
+                    TableName: this.tableName,
+                    Key: { tenantId, knowledgeSpaceId: ksId }
+                }));
+            }, { logger: this.logger });
+            this.logger.info('Successfully deleted knowledge space from DynamoDB', {
+                tenantId,
+                knowledgeSpaceId: ksId
+            });
+        }
+        catch (error) {
+            this.logger.error('Failed to delete knowledge space from DynamoDB', error instanceof Error ? error : new Error(String(error)), {
+                tenantId,
+                knowledgeSpaceId: ksId,
+                tableName: this.tableName
+            });
+            throw error;
+        }
+    }
 }
 exports.DynamoDBKnowledgeSpaceRepository = DynamoDBKnowledgeSpaceRepository;
 //# sourceMappingURL=DynamoDBKnowledgeSpaceRepository.js.map

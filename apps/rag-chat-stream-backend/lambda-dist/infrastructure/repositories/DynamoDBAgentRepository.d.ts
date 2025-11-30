@@ -9,5 +9,7 @@ export declare class DynamoDBAgentRepository implements IAgentRepository {
     constructor(dynamoDB: DynamoDBDocumentClient, tableName: string, logger: ILogger);
     save(agent: Agent): Promise<void>;
     findByTenantAndId(tenantId: string, agentId: string): Promise<Agent | null>;
+    update(agent: Agent): Promise<void>;
+    delete(tenantId: string, agentId: string): Promise<void>;
 }
 //# sourceMappingURL=DynamoDBAgentRepository.d.ts.map

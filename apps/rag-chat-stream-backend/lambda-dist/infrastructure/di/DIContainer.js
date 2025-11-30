@@ -24,6 +24,9 @@ const CreateProductKnowledgeSpaceUseCase_1 = require("../../use-cases/CreateProd
 const ListKnowledgeSpacesUseCase_1 = require("../../use-cases/ListKnowledgeSpacesUseCase");
 const CreateAgentUseCase_1 = require("../../use-cases/CreateAgentUseCase");
 const ChatWithAgentUseCase_1 = require("../../use-cases/ChatWithAgentUseCase");
+const delete_agent_use_case_1 = require("../../use-cases/delete-agent.use-case");
+const update_agent_use_case_1 = require("../../use-cases/update-agent.use-case");
+const delete_knowledge_space_use_case_1 = require("../../use-cases/delete-knowledge-space.use-case");
 // Controllers
 const KnowledgeCreateController_1 = require("../../adapters/controllers/KnowledgeCreateController");
 const ProductKnowledgeCreateController_1 = require("../../adapters/controllers/ProductKnowledgeCreateController");
@@ -158,6 +161,30 @@ class DIContainer {
      */
     getChatCompletionsStreamController() {
         return this.chatCompletionsStreamController;
+    }
+    /**
+     * Get DeleteAgentUseCase instance
+     */
+    getDeleteAgentUseCase() {
+        return new delete_agent_use_case_1.DeleteAgentUseCase(this.agentRepo, this.logger);
+    }
+    /**
+     * Get UpdateAgentUseCase instance
+     */
+    getUpdateAgentUseCase() {
+        return new update_agent_use_case_1.UpdateAgentUseCase(this.agentRepo, this.logger);
+    }
+    /**
+     * Get DeleteKnowledgeSpaceUseCase instance
+     */
+    getDeleteKnowledgeSpaceUseCase() {
+        return new delete_knowledge_space_use_case_1.DeleteKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.logger);
+    }
+    /**
+     * Get Logger instance
+     */
+    getLogger() {
+        return this.logger;
     }
 }
 exports.DIContainer = DIContainer;

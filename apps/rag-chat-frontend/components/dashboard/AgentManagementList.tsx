@@ -36,10 +36,10 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
     setDeleteLoading(true);
     try {
       await deleteAgent(deletingAgent.id);
-      setToast({ message: 'エージェントを削除しました（ローカルのみ）', type: 'success' });
+      setToast({ message: 'Agent deleted (local only)', type: 'success' });
       setDeletingAgent(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : '削除に失敗しました';
+      const message = err instanceof Error ? err.message : 'Failed to delete';
       setToast({ message, type: 'error' });
     } finally {
       setDeleteLoading(false);
@@ -51,13 +51,13 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
 
     try {
       await updateAgent(editingAgent.id, data);
-      setToast({ message: 'エージェントを更新しました', type: 'success' });
+      setToast({ message: 'Agent updated', type: 'success' });
       setEditingAgent(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : '更新に失敗しました';
+      const message = err instanceof Error ? err.message : 'Failed to update';
       // Check if it's a 404 error (API not implemented)
       if (message.includes('404') || message.includes('Not Found')) {
-        setToast({ message: 'バックエンドAPIが未実装です。更新APIを実装してください。', type: 'error' });
+        setToast({ message: 'Backend API not implemented. Please implement update API.', type: 'error' });
       } else {
         setToast({ message, type: 'error' });
       }
@@ -70,13 +70,13 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
   };
 
   if (loading && agents.length === 0) {
-    return <div className="text-center py-8">読み込み中...</div>;
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-        エラー: {error}
+        Error: {error}
       </div>
     );
   }
@@ -84,13 +84,13 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">エージェント</h2>
+        <h2 className="text-2xl font-bold">Agents</h2>
         <button
           onClick={refetch}
           disabled={loading}
           className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
         >
-          更新
+          Refresh
         </button>
       </div>
 
@@ -102,23 +102,25 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
 
       {agents.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          エージェントがありません
+          No agents found
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">名前</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">説明</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ナレッジスペース</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">作成日</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">操作</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Knowledge Space</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {agents.map((agent) => (
-                <tr key={agent.id} className="hover:bg-gray-50">
+              {agents.map((agent, idx) => {
+                const rowKey = agent.id || `${agent.name}-${agent.createdAt}-${idx}`;
+                return (
+                <tr key={rowKey} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{agent.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                     {agent.description || '-'}
@@ -133,26 +135,36 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
                   </td>
                   <td className="px-6 py-4 text-right space-x-2">
                     <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(agent.id);
+                        setToast({ message: 'Agent ID copied', type: 'success' });
+                      }}
+                      className="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                      title="Copy Agent ID"
+                    >
+                      ID
+                    </button>
+                    <button
                       onClick={() => router.push(`/agents/${agent.id}`)}
                       className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
                     >
-                      チャット
+                      Chat
                     </button>
                     <button
                       onClick={() => setEditingAgent(agent)}
                       className="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
                     >
-                      編集
+                      Edit
                     </button>
                     <button
                       onClick={() => setDeletingAgent(agent)}
                       className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
                     >
-                      削除
+                      Delete
                     </button>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
@@ -170,8 +182,8 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
 
       <DeleteConfirmDialog
         isOpen={!!deletingAgent}
-        title="エージェントの削除"
-        message={`「${deletingAgent?.name}」を削除してもよろしいですか？`}
+        title="Delete Agent"
+        message={`Are you sure you want to delete "${deletingAgent?.name}"?`}
         onConfirm={handleDelete}
         onCancel={() => setDeletingAgent(null)}
         loading={deleteLoading}

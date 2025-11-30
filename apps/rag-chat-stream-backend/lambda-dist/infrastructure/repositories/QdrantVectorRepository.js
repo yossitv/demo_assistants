@@ -114,6 +114,21 @@ class QdrantVectorRepository {
             });
         }
     }
+    async deleteCollection(collectionName) {
+        this.logger.info('Deleting Qdrant collection', { collection: collectionName });
+        try {
+            await this.qdrantClient.deleteCollection(collectionName);
+            this.logger.info('Successfully deleted Qdrant collection', { collection: collectionName });
+        }
+        catch (error) {
+            // Ignore 404 errors (collection doesn't exist)
+            if (error?.status === 404) {
+                this.logger.warn('Qdrant collection not found, skipping deletion', { collection: collectionName });
+                return;
+            }
+            throw error;
+        }
+    }
 }
 exports.QdrantVectorRepository = QdrantVectorRepository;
 //# sourceMappingURL=QdrantVectorRepository.js.map

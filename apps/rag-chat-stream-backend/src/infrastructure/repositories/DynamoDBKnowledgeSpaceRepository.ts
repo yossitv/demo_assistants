@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { IKnowledgeSpaceRepository } from '../../domain/repositories/IKnowledgeSpaceRepository';
 import { KnowledgeSpace } from '../../domain/entities/KnowledgeSpace';
 import { ILogger } from '../../domain/services/ILogger';
@@ -156,6 +156,42 @@ export class DynamoDBKnowledgeSpaceRepository implements IKnowledgeSpaceReposito
     } catch (error) {
       this.logger.error(
         'Failed to find knowledge space in DynamoDB',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          tenantId,
+          knowledgeSpaceId: ksId,
+          tableName: this.tableName
+        }
+      );
+      throw error;
+    }
+  }
+
+  async delete(tenantId: string, ksId: string): Promise<void> {
+    this.logger.info('Deleting knowledge space from DynamoDB', {
+      tenantId,
+      knowledgeSpaceId: ksId,
+      tableName: this.tableName
+    });
+
+    try {
+      await retryWithBackoff(
+        async () => {
+          await this.dynamoDB.send(new DeleteCommand({
+            TableName: this.tableName,
+            Key: { tenantId, knowledgeSpaceId: ksId }
+          }));
+        },
+        { logger: this.logger }
+      );
+
+      this.logger.info('Successfully deleted knowledge space from DynamoDB', {
+        tenantId,
+        knowledgeSpaceId: ksId
+      });
+    } catch (error) {
+      this.logger.error(
+        'Failed to delete knowledge space from DynamoDB',
         error instanceof Error ? error : new Error(String(error)),
         {
           tenantId,

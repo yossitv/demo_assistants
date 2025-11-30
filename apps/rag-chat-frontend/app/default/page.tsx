@@ -33,6 +33,7 @@ type ChatMessage = {
 
 export default function DefaultDashboard() {
   const defaultApiKey =
+    (process.env.NEXT_PUBLIC_JWT_TOKEN ? `Bearer ${process.env.NEXT_PUBLIC_JWT_TOKEN}` : undefined) ||
     process.env.NEXT_PUBLIC_API_KEY ||
     process.env.NEXT_PUBLIC_TEST_API_KEY ||
     // Fallback for local dev when only TEST_API_KEY is provided
@@ -76,8 +77,9 @@ export default function DefaultDashboard() {
     try {
       const storedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
       const storedUrl = localStorage.getItem(API_URL_STORAGE_KEY);
-      if (storedKey) setApiKey(storedKey);
-      if (storedUrl) setApiUrl(storedUrl);
+      // 既に環境変数で与えられている場合は優先し、ローカルの古い値（例: 旧APIキー/旧URL）で上書きしない
+      if (!defaultApiKey && storedKey) setApiKey(storedKey);
+      if (!defaultApiUrl && storedUrl) setApiUrl(storedUrl);
       const storedAgents = loadStoredAgents();
       if (storedAgents.length > 0) {
         setAgents(
@@ -274,10 +276,11 @@ export default function DefaultDashboard() {
       formData.append('mode', uploadMode);
 
       console.log('Uploading to:', `${apiUrl}/v1/knowledge/create`);
+      const authHeader = apiKey.startsWith('Bearer') ? apiKey : `Bearer ${apiKey}`;
       const response = await fetch(`${apiUrl}/v1/knowledge/create`, {
         method: 'POST',
         headers: { 
-          'Authorization': apiKey 
+          'Authorization': authHeader 
           // Content-Typeは指定しない（fetchが自動でmultipart/form-dataを設定）
         },
         body: formData,

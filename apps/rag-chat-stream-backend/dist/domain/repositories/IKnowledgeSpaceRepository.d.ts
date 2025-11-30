@@ -22,5 +22,11 @@ export interface IKnowledgeSpaceRepository {
      * @returns The KnowledgeSpace entity if found, null otherwise
      */
     findByTenantAndId(tenantId: string, ksId: string): Promise<KnowledgeSpace | null>;
+    /**
+     * Deletes a KnowledgeSpace by tenant ID and knowledge space ID.
+     * @param tenantId - The tenant identifier
+     * @param ksId - The knowledge space identifier
+     */
+    delete(tenantId: string, ksId: string): Promise<void>;
 }
 //# sourceMappingURL=IKnowledgeSpaceRepository.d.ts.map

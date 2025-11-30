@@ -120,6 +120,36 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       memorySize: 512,
     });
 
+    const agentUpdateLambda = new lambda.Function(this, 'AgentUpdateFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handlers/agent-update.handler',
+      code: lambda.Code.fromAsset(lambdaAssetPath),
+      environment: lambdaEnvironment,
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+
+    const agentDeleteLambda = new lambda.Function(this, 'AgentDeleteFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handlers/agent-delete.handler',
+      code: lambda.Code.fromAsset(lambdaAssetPath),
+      environment: lambdaEnvironment,
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+
+    const knowledgeDeleteLambda = new lambda.Function(this, 'KnowledgeDeleteFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handlers/knowledge-delete.handler',
+      code: lambda.Code.fromAsset(lambdaAssetPath),
+      environment: lambdaEnvironment,
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+
     const chatLambda = new lambda.Function(this, 'ChatFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handlers/chat.handler',
@@ -307,8 +337,17 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       apiKeyRequired: false,
     });
 
-    const knowledgeChunks = knowledge.addResource('{knowledgeSpaceId}').addResource('chunks');
+    const knowledgeSpaceIdResource = knowledge.addResource('{knowledgeSpaceId}');
+    
+    const knowledgeChunks = knowledgeSpaceIdResource.addResource('chunks');
     knowledgeChunks.addMethod('GET', new apigateway.LambdaIntegration(knowledgeChunksLambda), {
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+      authorizer: apiKeyAuthorizer,
+      apiKeyRequired: false,
+    });
+
+    // /v1/knowledge/{knowledgeSpaceId} - DELETE
+    knowledgeSpaceIdResource.addMethod('DELETE', new apigateway.LambdaIntegration(knowledgeDeleteLambda), {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       authorizer: apiKeyAuthorizer,
       apiKeyRequired: false,
@@ -319,6 +358,19 @@ export class RagChatStreamBackendStack extends cdk.Stack {
 
     const agentCreate = agent.addResource('create');
     agentCreate.addMethod('POST', new apigateway.LambdaIntegration(agentCreateLambda), {
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+      authorizer: apiKeyAuthorizer,
+      apiKeyRequired: false,
+    });
+
+    // /v1/agent/{agentId}
+    const agentById = agent.addResource('{agentId}');
+    agentById.addMethod('PUT', new apigateway.LambdaIntegration(agentUpdateLambda), {
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+      authorizer: apiKeyAuthorizer,
+      apiKeyRequired: false,
+    });
+    agentById.addMethod('DELETE', new apigateway.LambdaIntegration(agentDeleteLambda), {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       authorizer: apiKeyAuthorizer,
       apiKeyRequired: false,
