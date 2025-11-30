@@ -120,9 +120,11 @@ export default function Home() {
 
           {recentAgents.length > 0 ? (
             <nav className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Recent agents">
-              {recentAgents.map((agent) => (
+              {recentAgents.map((agent, idx) => {
+                const cardKey = agent.id || `${agent.name}-${agent.createdAt}-${idx}`;
+                return (
                 <Link
-                  key={agent.id}
+                  key={cardKey}
                   href={`/agents/${agent.id}`}
                   className="group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
                   aria-label={`Chat with ${agent.name}`}
@@ -168,7 +170,7 @@ export default function Home() {
                     </svg>
                   </div>
                 </Link>
-              ))}
+              )})}
             </nav>
           ) : (
             <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700" role="status">
