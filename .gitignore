@@ -2,3 +2,9 @@ private
 .env
 node_modules
 cdk.out
+cdk.out.deploy
+*.zip
+lambda-dist
+dist
+.next
+.turbo
