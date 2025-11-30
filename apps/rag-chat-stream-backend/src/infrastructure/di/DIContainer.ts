@@ -19,20 +19,24 @@ import { IChunkingService } from '../../domain/services/IChunkingService';
 import { ICrawlerService } from '../../domain/services/ICrawlerService';
 import { ILLMService } from '../../domain/services/ILLMService';
 import { ILogger } from '../../domain/services/ILogger';
+import { IProductParserService } from '../../domain/services/IProductParserService';
 import { OpenAIEmbeddingService } from '../services/OpenAIEmbeddingService';
 import { TiktokenChunkingService } from '../services/TiktokenChunkingService';
 import { CheerioCrawlerService } from '../services/CheerioCrawlerService';
 import { OpenAILLMService } from '../services/OpenAILLMService';
 import { CloudWatchLogger } from '../services/CloudWatchLogger';
+import { ProductParserService } from '../services/ProductParserService';
 
 // Use Cases
 import { CreateKnowledgeSpaceUseCase } from '../../use-cases/CreateKnowledgeSpaceUseCase';
+import { CreateProductKnowledgeSpaceUseCase } from '../../use-cases/CreateProductKnowledgeSpaceUseCase';
 import { ListKnowledgeSpacesUseCase } from '../../use-cases/ListKnowledgeSpacesUseCase';
 import { CreateAgentUseCase } from '../../use-cases/CreateAgentUseCase';
 import { ChatWithAgentUseCase } from '../../use-cases/ChatWithAgentUseCase';
 
 // Controllers
 import { KnowledgeCreateController } from '../../adapters/controllers/KnowledgeCreateController';
+import { ProductKnowledgeCreateController } from '../../adapters/controllers/ProductKnowledgeCreateController';
 import { KnowledgeListController } from '../../adapters/controllers/KnowledgeListController';
 import { AgentCreateController } from '../../adapters/controllers/AgentCreateController';
 import { ChatController } from '../../adapters/controllers/ChatController';
@@ -65,15 +69,18 @@ export class DIContainer {
   private readonly crawlerService: ICrawlerService;
   private readonly llmService: ILLMService;
   private readonly logger: ILogger;
+  private readonly productParserService: IProductParserService;
 
   // Use Cases
   private readonly createKnowledgeSpaceUseCase: CreateKnowledgeSpaceUseCase;
+  private readonly createProductKnowledgeSpaceUseCase: CreateProductKnowledgeSpaceUseCase;
   private readonly listKnowledgeSpacesUseCase: ListKnowledgeSpacesUseCase;
   private readonly createAgentUseCase: CreateAgentUseCase;
   private readonly chatWithAgentUseCase: ChatWithAgentUseCase;
 
   // Controllers
   private readonly knowledgeCreateController: KnowledgeCreateController;
+  private readonly productKnowledgeCreateController: ProductKnowledgeCreateController;
   private readonly knowledgeListController: KnowledgeListController;
   private readonly agentCreateController: AgentCreateController;
   private readonly chatController: ChatController;
@@ -144,12 +151,22 @@ export class DIContainer {
       retryOptions
     );
 
+    this.productParserService = new ProductParserService();
+
     // Initialize use cases (Use Case Layer)
     this.createKnowledgeSpaceUseCase = new CreateKnowledgeSpaceUseCase(
       this.knowledgeSpaceRepo,
       this.vectorRepo,
       this.crawlerService,
       this.chunkingService,
+      this.embeddingService,
+      this.logger
+    );
+
+    this.createProductKnowledgeSpaceUseCase = new CreateProductKnowledgeSpaceUseCase(
+      this.knowledgeSpaceRepo,
+      this.vectorRepo,
+      this.productParserService,
       this.embeddingService,
       this.logger
     );
@@ -177,6 +194,12 @@ export class DIContainer {
     // Initialize controllers (Interface Adapters Layer)
     this.knowledgeCreateController = new KnowledgeCreateController(
       this.createKnowledgeSpaceUseCase,
+      this.createProductKnowledgeSpaceUseCase,
+      this.logger
+    );
+
+    this.productKnowledgeCreateController = new ProductKnowledgeCreateController(
+      this.createProductKnowledgeSpaceUseCase,
       this.logger
     );
 
@@ -212,6 +235,13 @@ export class DIContainer {
    */
   getKnowledgeCreateController(): KnowledgeCreateController {
     return this.knowledgeCreateController;
+  }
+
+  /**
+   * Get ProductKnowledgeCreateController instance
+   */
+  getProductKnowledgeCreateController(): ProductKnowledgeCreateController {
+    return this.productKnowledgeCreateController;
   }
 
   /**

@@ -5,6 +5,9 @@ export interface APIGatewayProxyEvent {
     };
     httpMethod: string;
     path: string;
+    pathParameters?: {
+        [key: string]: string;
+    } | null;
     queryStringParameters: {
         [key: string]: string;
     } | null;

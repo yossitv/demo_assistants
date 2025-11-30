@@ -1,3 +1,4 @@
+import { AgentPreset } from '../domain/entities/Agent';
 import { IAgentRepository } from '../domain/repositories/IAgentRepository';
 import { ILogger } from '../domain/services/ILogger';
 export interface CreateAgentInput {
@@ -6,6 +7,8 @@ export interface CreateAgentInput {
     knowledgeSpaceIds: string[];
     strictRAG: boolean;
     description?: string;
+    systemPrompt?: string;
+    preset?: AgentPreset;
     requestId?: string;
 }
 export interface CreateAgentOutput {

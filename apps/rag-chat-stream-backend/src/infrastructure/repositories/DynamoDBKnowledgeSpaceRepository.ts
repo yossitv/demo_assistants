@@ -30,7 +30,10 @@ export class DynamoDBKnowledgeSpaceRepository implements IKnowledgeSpaceReposito
               type: ks.type,
               sourceUrls: ks.sourceUrls,
               currentVersion: ks.currentVersion,
-              createdAt: ks.createdAt.toISOString()
+              createdAt: ks.createdAt.toISOString(),
+              ...(ks.status && { status: ks.status }),
+              ...(ks.documentCount !== undefined && { documentCount: ks.documentCount }),
+              ...(ks.metadata && { metadata: ks.metadata })
             }
           }));
         },
@@ -79,10 +82,13 @@ export class DynamoDBKnowledgeSpaceRepository implements IKnowledgeSpaceReposito
         item.tenantId,
         item.knowledgeSpaceId,
         item.name,
-        item.type,
+        item.type || 'web',
         item.sourceUrls,
         item.currentVersion,
-        new Date(item.createdAt)
+        new Date(item.createdAt),
+        item.status,
+        item.documentCount,
+        item.metadata
       ));
 
       this.logger.info('Successfully retrieved knowledge spaces from DynamoDB', {
@@ -139,10 +145,13 @@ export class DynamoDBKnowledgeSpaceRepository implements IKnowledgeSpaceReposito
         result.Item.tenantId,
         result.Item.knowledgeSpaceId,
         result.Item.name,
-        result.Item.type,
+        result.Item.type || 'web',
         result.Item.sourceUrls,
         result.Item.currentVersion,
-        new Date(result.Item.createdAt)
+        new Date(result.Item.createdAt),
+        result.Item.status,
+        result.Item.documentCount,
+        result.Item.metadata
       );
     } catch (error) {
       this.logger.error(

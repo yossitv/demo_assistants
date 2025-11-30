@@ -9,10 +9,12 @@ const apiKeyCheck_1 = require("../../shared/apiKeyCheck");
 const jwtVerify_1 = require("../../shared/jwtVerify");
 class KnowledgeCreateController {
     useCase;
+    productUseCase;
     logger;
     structuredLogger;
-    constructor(useCase, logger) {
+    constructor(useCase, productUseCase, logger) {
         this.useCase = useCase;
+        this.productUseCase = productUseCase;
         this.logger = logger || { debug: () => { }, info: () => { }, warn: () => { }, error: () => { } };
         // Check if logger is CloudWatchLogger for structured logging
         if (logger instanceof CloudWatchLogger_1.CloudWatchLogger) {
@@ -30,6 +32,12 @@ class KnowledgeCreateController {
                 return (0, cors_1.errorResponse)(401, 'Unauthorized');
             }
             const { tenantId, userId, authMethod } = authContext;
+            // Check if this is a multipart request
+            const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
+            if (contentType.includes('multipart/form-data')) {
+                return await this.handleMultipartUpload(event, tenantId, userId, requestId, authMethod, startTime);
+            }
+            // Handle JSON request (existing logic)
             const validatedBody = (0, validation_1.validateKnowledgeCreateBody)(event.body);
             // Log request summary with structured logging
             if (this.structuredLogger) {
@@ -160,6 +168,94 @@ class KnowledgeCreateController {
             path,
             reason: 'Missing tenantId in claims'
         });
+    }
+    async handleMultipartUpload(event, tenantId, userId, requestId, authMethod, startTime) {
+        try {
+            const { name, fileContent } = this.parseMultipartFormData(event);
+            if (!name || !fileContent) {
+                return (0, cors_1.errorResponse)(400, 'Missing required fields: name and file');
+            }
+            this.logger.info('Product knowledge space creation request', {
+                tenantId,
+                userId,
+                requestId,
+                name,
+                fileSize: fileContent.length,
+                authMethod
+            });
+            const result = await this.productUseCase.execute({
+                tenantId,
+                name,
+                fileContent,
+                requestId
+            });
+            const durationMs = Date.now() - startTime;
+            if (this.structuredLogger) {
+                this.structuredLogger.logResponse({
+                    requestId,
+                    tenantId,
+                    userId,
+                    path: event.path,
+                    statusCode: 200,
+                    durationMs,
+                    authMethod
+                });
+            }
+            this.logger.info('Product knowledge space created', {
+                tenantId,
+                userId,
+                requestId,
+                knowledgeSpaceId: result.knowledgeSpaceId,
+                status: result.status,
+                documentCount: result.documentCount,
+                durationMs,
+                authMethod
+            });
+            return (0, cors_1.successResponse)(200, result);
+        }
+        catch (error) {
+            this.logger.error('Failed to create product knowledge space', error, {
+                tenantId,
+                userId,
+                requestId
+            });
+            return (0, cors_1.errorResponse)(500, 'Internal server error');
+        }
+    }
+    parseMultipartFormData(event) {
+        const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
+        if (!contentType.includes('multipart/form-data')) {
+            return {};
+        }
+        const body = event.isBase64Encoded
+            ? Buffer.from(event.body || '', 'base64').toString('utf-8')
+            : event.body || '';
+        const boundaryMatch = contentType.match(/boundary=([^;]+)/);
+        if (!boundaryMatch) {
+            return {};
+        }
+        const boundary = boundaryMatch[1];
+        const parts = body.split(`--${boundary}`);
+        let name;
+        let fileContent;
+        for (const part of parts) {
+            if (part.includes('Content-Disposition')) {
+                const nameMatch = part.match(/name="([^"]+)"/);
+                if (!nameMatch)
+                    continue;
+                const fieldName = nameMatch[1];
+                const contentStart = part.indexOf('\r\n\r\n') + 4;
+                const contentEnd = part.lastIndexOf('\r\n');
+                const content = part.substring(contentStart, contentEnd);
+                if (fieldName === 'name') {
+                    name = content.trim();
+                }
+                else if (fieldName === 'file') {
+                    fileContent = content;
+                }
+            }
+        }
+        return { name, fileContent };
     }
 }
 exports.KnowledgeCreateController = KnowledgeCreateController;

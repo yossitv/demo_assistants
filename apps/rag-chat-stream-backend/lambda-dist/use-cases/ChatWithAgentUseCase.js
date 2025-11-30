@@ -116,7 +116,7 @@ class ChatWithAgentUseCase {
         // 7. Build context and prompt
         const contextMarkdown = this.buildContextMarkdown(filteredResults);
         const citedUrls = this.extractCitedUrls(filteredResults);
-        const prompt = this.buildPrompt(contextMarkdown, input.messages, lastUserMessage);
+        const prompt = this.buildPrompt(agent, contextMarkdown, input.messages, lastUserMessage);
         // Log prompt in non-production environments for debugging
         const logLevel = process.env.LOG_LEVEL || 'INFO';
         const nodeEnv = process.env.NODE_ENV || 'development';
@@ -168,9 +168,9 @@ class ChatWithAgentUseCase {
         const urls = [...new Set(results.map(r => r.chunk.url))];
         return urls.slice(0, this.MAX_CITED_URLS);
     }
-    buildPrompt(contextMarkdown, messages, latestUserMessage) {
+    buildPrompt(agent, contextMarkdown, messages, latestUserMessage) {
         const history = messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n');
-        return `SYSTEM: あなたは公式サポートAIです。
+        const systemPrompt = agent.getSystemPrompt ? agent.getSystemPrompt() : `SYSTEM: あなたは公式サポートAIです。
 与えられたコンテキストの範囲内のみで回答してください。
 コンテキストに情報がない場合は、必ず次のように答えてください：
 「このサイトには情報がありませんでした。」
@@ -178,7 +178,8 @@ class ChatWithAgentUseCase {
 AGENT POLICY:
 - 丁寧なビジネス口調で回答してください。
 - 推測で回答しないでください。
-- 箇条書きが有効な場合は箇条書きを利用してください。
+- 箇条書きが有効な場合は箇条書きを利用してください。`;
+        return `${systemPrompt}
 
 CONTEXT:
 ${contextMarkdown}

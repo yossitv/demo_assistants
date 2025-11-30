@@ -41,13 +41,19 @@ describe('Controllers - validation and auth', () => {
   };
 
   it('KnowledgeCreateController returns 401 without tenant claim (Property 4)', async () => {
-    const controller = new KnowledgeCreateController({ execute: jest.fn() } as any);
+    const controller = new KnowledgeCreateController(
+      { execute: jest.fn() } as any,
+      { execute: jest.fn() } as any
+    );
     const res = await controller.handle(baseEvent);
     expect(res.statusCode).toBe(401);
   });
 
   it('KnowledgeCreateController returns 400 on invalid body', async () => {
-    const controller = new KnowledgeCreateController({ execute: jest.fn() } as any);
+    const controller = new KnowledgeCreateController(
+      { execute: jest.fn() } as any,
+      { execute: jest.fn() } as any
+    );
     const event = createAuthEvent('{}');
     const res = await controller.handle(event);
     expect(res.statusCode).toBe(400);
@@ -55,7 +61,8 @@ describe('Controllers - validation and auth', () => {
 
   it('KnowledgeCreateController calls use case on valid input', async () => {
     const useCase = { execute: jest.fn().mockResolvedValue({ knowledgeSpaceId: 'ks-1', status: 'completed', successfulUrls: 1, failedUrls: 0 }) } as any;
-    const controller = new KnowledgeCreateController(useCase);
+    const productUseCase = { execute: jest.fn() } as any;
+    const controller = new KnowledgeCreateController(useCase, productUseCase);
     const event = createAuthEvent(JSON.stringify({ name: 'KS', sourceUrls: ['https://example.com'] }));
     const res = await controller.handle(event);
     expect(useCase.execute).toHaveBeenCalledWith({ tenantId: 't1', name: 'KS', sourceUrls: ['https://example.com'], requestId: 'req-1' });

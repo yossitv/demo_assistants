@@ -24,7 +24,10 @@ class ListKnowledgeSpacesUseCase {
                     knowledgeSpaceId: ks.knowledgeSpaceId,
                     name: ks.name,
                     type: ks.type,
-                    lastUpdatedAt: ks.createdAt.toISOString()
+                    status: ks.status,
+                    documentCount: ks.documentCount,
+                    lastUpdatedAt: ks.createdAt.toISOString(),
+                    metadata: ks.metadata
                 }))
             };
         }

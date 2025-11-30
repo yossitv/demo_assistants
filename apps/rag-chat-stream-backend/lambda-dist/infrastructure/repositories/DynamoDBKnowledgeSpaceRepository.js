@@ -30,7 +30,10 @@ class DynamoDBKnowledgeSpaceRepository {
                         type: ks.type,
                         sourceUrls: ks.sourceUrls,
                         currentVersion: ks.currentVersion,
-                        createdAt: ks.createdAt.toISOString()
+                        createdAt: ks.createdAt.toISOString(),
+                        ...(ks.status && { status: ks.status }),
+                        ...(ks.documentCount !== undefined && { documentCount: ks.documentCount }),
+                        ...(ks.metadata && { metadata: ks.metadata })
                     }
                 }));
             }, { logger: this.logger });
@@ -63,7 +66,7 @@ class DynamoDBKnowledgeSpaceRepository {
                     }
                 }));
             }, { logger: this.logger });
-            const knowledgeSpaces = (result.Items || []).map(item => new KnowledgeSpace_1.KnowledgeSpace(item.tenantId, item.knowledgeSpaceId, item.name, item.type, item.sourceUrls, item.currentVersion, new Date(item.createdAt)));
+            const knowledgeSpaces = (result.Items || []).map(item => new KnowledgeSpace_1.KnowledgeSpace(item.tenantId, item.knowledgeSpaceId, item.name, item.type || 'web', item.sourceUrls, item.currentVersion, new Date(item.createdAt), item.status, item.documentCount, item.metadata));
             this.logger.info('Successfully retrieved knowledge spaces from DynamoDB', {
                 tenantId,
                 count: knowledgeSpaces.length
@@ -102,7 +105,7 @@ class DynamoDBKnowledgeSpaceRepository {
                 tenantId,
                 knowledgeSpaceId: ksId
             });
-            return new KnowledgeSpace_1.KnowledgeSpace(result.Item.tenantId, result.Item.knowledgeSpaceId, result.Item.name, result.Item.type, result.Item.sourceUrls, result.Item.currentVersion, new Date(result.Item.createdAt));
+            return new KnowledgeSpace_1.KnowledgeSpace(result.Item.tenantId, result.Item.knowledgeSpaceId, result.Item.name, result.Item.type || 'web', result.Item.sourceUrls, result.Item.currentVersion, new Date(result.Item.createdAt), result.Item.status, result.Item.documentCount, result.Item.metadata);
         }
         catch (error) {
             this.logger.error('Failed to find knowledge space in DynamoDB', error instanceof Error ? error : new Error(String(error)), {

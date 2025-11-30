@@ -1,5 +1,6 @@
 import { IKnowledgeSpaceRepository } from '../domain/repositories/IKnowledgeSpaceRepository';
 import { ILogger } from '../domain/services/ILogger';
+import { KnowledgeSpaceType, KnowledgeSpaceStatus } from '../domain/entities/KnowledgeSpace';
 
 export interface ListKnowledgeSpacesInput {
   tenantId: string;
@@ -9,8 +10,11 @@ export interface ListKnowledgeSpacesOutput {
   knowledgeSpaces: Array<{
     knowledgeSpaceId: string;
     name: string;
-    type: 'web';
+    type: KnowledgeSpaceType;
+    status?: KnowledgeSpaceStatus;
+    documentCount?: number;
     lastUpdatedAt: string;
+    metadata?: any;
   }>;
 }
 
@@ -39,7 +43,10 @@ export class ListKnowledgeSpacesUseCase {
           knowledgeSpaceId: ks.knowledgeSpaceId,
           name: ks.name,
           type: ks.type,
-          lastUpdatedAt: ks.createdAt.toISOString()
+          status: ks.status,
+          documentCount: ks.documentCount,
+          lastUpdatedAt: ks.createdAt.toISOString(),
+          metadata: ks.metadata
         }))
       };
     } catch (error) {

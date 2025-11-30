@@ -30,6 +30,8 @@ class DynamoDBAgentRepository {
                         description: agent.description,
                         knowledgeSpaceIds: agent.knowledgeSpaceIds,
                         strictRAG: agent.strictRAG,
+                        systemPrompt: agent.systemPrompt,
+                        preset: agent.preset,
                         createdAt: agent.createdAt.toISOString()
                     }
                 }));
@@ -72,7 +74,7 @@ class DynamoDBAgentRepository {
                 tenantId,
                 agentId
             });
-            return new Agent_1.Agent(result.Item.tenantId, result.Item.agentId, result.Item.name, result.Item.knowledgeSpaceIds, result.Item.strictRAG, result.Item.description, new Date(result.Item.createdAt));
+            return new Agent_1.Agent(result.Item.tenantId, result.Item.agentId, result.Item.name, result.Item.knowledgeSpaceIds, result.Item.strictRAG, result.Item.description, result.Item.systemPrompt, result.Item.preset, new Date(result.Item.createdAt));
         }
         catch (error) {
             this.logger.error('Failed to find agent in DynamoDB', error instanceof Error ? error : new Error(String(error)), {

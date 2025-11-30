@@ -21,10 +21,11 @@ class CreateAgentUseCase {
             name: input.name,
             knowledgeSpaceCount: input.knowledgeSpaceIds.length,
             strictRAG: input.strictRAG,
+            preset: input.preset,
             requestId: input.requestId
         });
         try {
-            const agent = new Agent_1.Agent(input.tenantId, this.generateId(), input.name, input.knowledgeSpaceIds, input.strictRAG, input.description, new Date());
+            const agent = new Agent_1.Agent(input.tenantId, this.generateId(), input.name, input.knowledgeSpaceIds, input.strictRAG, input.description, input.systemPrompt, input.preset, new Date());
             await this.agentRepo.save(agent);
             // Log agent creation with structured logging
             if (this.structuredLogger && input.requestId) {
@@ -44,6 +45,7 @@ class CreateAgentUseCase {
                     name: input.name,
                     knowledgeSpaceIds: input.knowledgeSpaceIds,
                     strictRAG: input.strictRAG,
+                    preset: input.preset,
                     requestId: input.requestId
                 });
             }

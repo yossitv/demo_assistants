@@ -17,13 +17,16 @@ const TiktokenChunkingService_1 = require("../services/TiktokenChunkingService")
 const CheerioCrawlerService_1 = require("../services/CheerioCrawlerService");
 const OpenAILLMService_1 = require("../services/OpenAILLMService");
 const CloudWatchLogger_1 = require("../services/CloudWatchLogger");
+const ProductParserService_1 = require("../services/ProductParserService");
 // Use Cases
 const CreateKnowledgeSpaceUseCase_1 = require("../../use-cases/CreateKnowledgeSpaceUseCase");
+const CreateProductKnowledgeSpaceUseCase_1 = require("../../use-cases/CreateProductKnowledgeSpaceUseCase");
 const ListKnowledgeSpacesUseCase_1 = require("../../use-cases/ListKnowledgeSpacesUseCase");
 const CreateAgentUseCase_1 = require("../../use-cases/CreateAgentUseCase");
 const ChatWithAgentUseCase_1 = require("../../use-cases/ChatWithAgentUseCase");
 // Controllers
 const KnowledgeCreateController_1 = require("../../adapters/controllers/KnowledgeCreateController");
+const ProductKnowledgeCreateController_1 = require("../../adapters/controllers/ProductKnowledgeCreateController");
 const KnowledgeListController_1 = require("../../adapters/controllers/KnowledgeListController");
 const AgentCreateController_1 = require("../../adapters/controllers/AgentCreateController");
 const ChatController_1 = require("../../adapters/controllers/ChatController");
@@ -52,13 +55,16 @@ class DIContainer {
     crawlerService;
     llmService;
     logger;
+    productParserService;
     // Use Cases
     createKnowledgeSpaceUseCase;
+    createProductKnowledgeSpaceUseCase;
     listKnowledgeSpacesUseCase;
     createAgentUseCase;
     chatWithAgentUseCase;
     // Controllers
     knowledgeCreateController;
+    productKnowledgeCreateController;
     knowledgeListController;
     agentCreateController;
     chatController;
@@ -93,13 +99,16 @@ class DIContainer {
         this.chunkingService = new TiktokenChunkingService_1.TiktokenChunkingService();
         this.crawlerService = new CheerioCrawlerService_1.CheerioCrawlerService(retryOptions);
         this.llmService = new OpenAILLMService_1.OpenAILLMService(this.openai, this.logger, process.env.LLM_MODEL || 'gpt-4', retryOptions);
+        this.productParserService = new ProductParserService_1.ProductParserService();
         // Initialize use cases (Use Case Layer)
         this.createKnowledgeSpaceUseCase = new CreateKnowledgeSpaceUseCase_1.CreateKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.crawlerService, this.chunkingService, this.embeddingService, this.logger);
+        this.createProductKnowledgeSpaceUseCase = new CreateProductKnowledgeSpaceUseCase_1.CreateProductKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.productParserService, this.embeddingService, this.logger);
         this.listKnowledgeSpacesUseCase = new ListKnowledgeSpacesUseCase_1.ListKnowledgeSpacesUseCase(this.knowledgeSpaceRepo, this.logger);
         this.createAgentUseCase = new CreateAgentUseCase_1.CreateAgentUseCase(this.agentRepo, this.logger);
         this.chatWithAgentUseCase = new ChatWithAgentUseCase_1.ChatWithAgentUseCase(this.agentRepo, this.knowledgeSpaceRepo, this.conversationRepo, this.vectorRepo, this.embeddingService, this.llmService, this.logger);
         // Initialize controllers (Interface Adapters Layer)
-        this.knowledgeCreateController = new KnowledgeCreateController_1.KnowledgeCreateController(this.createKnowledgeSpaceUseCase, this.logger);
+        this.knowledgeCreateController = new KnowledgeCreateController_1.KnowledgeCreateController(this.createKnowledgeSpaceUseCase, this.createProductKnowledgeSpaceUseCase, this.logger);
+        this.productKnowledgeCreateController = new ProductKnowledgeCreateController_1.ProductKnowledgeCreateController(this.createProductKnowledgeSpaceUseCase, this.logger);
         this.knowledgeListController = new KnowledgeListController_1.KnowledgeListController(this.listKnowledgeSpacesUseCase, this.logger);
         this.agentCreateController = new AgentCreateController_1.AgentCreateController(this.createAgentUseCase, this.logger);
         this.chatController = new ChatController_1.ChatController(this.chatWithAgentUseCase, this.logger);
@@ -119,6 +128,12 @@ class DIContainer {
      */
     getKnowledgeCreateController() {
         return this.knowledgeCreateController;
+    }
+    /**
+     * Get ProductKnowledgeCreateController instance
+     */
+    getProductKnowledgeCreateController() {
+        return this.productKnowledgeCreateController;
     }
     /**
      * Get KnowledgeListController instance

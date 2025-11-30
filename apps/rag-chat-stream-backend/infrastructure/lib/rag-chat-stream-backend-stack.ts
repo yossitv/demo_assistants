@@ -100,6 +100,16 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       memorySize: 512,
     });
 
+    const knowledgeChunksLambda = new lambda.Function(this, 'KnowledgeChunksFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handlers/knowledgeChunks.handler',
+      code: lambda.Code.fromAsset(lambdaAssetPath),
+      environment: lambdaEnvironment,
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 512,
+    });
+
     const agentCreateLambda = new lambda.Function(this, 'AgentCreateFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handlers/agentCreate.handler',
@@ -297,6 +307,13 @@ export class RagChatStreamBackendStack extends cdk.Stack {
       apiKeyRequired: false,
     });
 
+    const knowledgeChunks = knowledge.addResource('{knowledgeSpaceId}').addResource('chunks');
+    knowledgeChunks.addMethod('GET', new apigateway.LambdaIntegration(knowledgeChunksLambda), {
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+      authorizer: apiKeyAuthorizer,
+      apiKeyRequired: false,
+    });
+
     // /v1/agent
     const agent = v1.addResource('agent');
 
@@ -329,10 +346,10 @@ export class RagChatStreamBackendStack extends cdk.Stack {
 
     // API Key and Usage Plan for external API access
     const apiKeyName = process.env.RAG_STREAM_API_KEY_NAME || `rag-stream-api-key-${cdk.Names.uniqueId(api)}`;
-    const apiKey = api.addApiKey('LambdaApiKeyV2', {
+    const apiKey = api.addApiKey('LambdaApiKeyV3', {
       apiKeyName,
       description: 'API Key for Lambda endpoint access',
-      value: ragApiKeyValue,
+      // value: ragApiKeyValue, // コメントアウト：自動生成させる
     });
 
     const usagePlan = api.addUsagePlan('LambdaUsagePlan', {

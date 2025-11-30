@@ -190,7 +190,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -234,7 +234,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/KnowledgeCreateFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -244,7 +244,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -288,7 +288,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/KnowledgeListFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -298,7 +298,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -342,7 +342,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/AgentCreateFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -352,7 +352,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -396,7 +396,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/ChatFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -406,7 +406,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -450,7 +450,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/ChatStreamFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -494,7 +494,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-381492091301-us-east-1",
-     "S3Key": "a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03.zip"
+     "S3Key": "acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a.zip"
     },
     "Environment": {
      "Variables": {
@@ -537,7 +537,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RagStreamAPI/ApiKeyAuthorizerFunction/Resource",
-    "aws:asset:path": "asset.a4d2468f7f8ec4ca7bd9e8c0b9f513095c5a88d3cb01315636f4373b86a42f03",
+    "aws:asset:path": "asset.acdfb68d6bce7358817d4b6496725a7e95d8b78f71b2adba4965f78dbbda8a1a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1743,7 +1743,7 @@
    "Properties": {
     "Description": "API Key for Lambda endpoint access",
     "Enabled": true,
-    "Name": "rag-stream-api-key-1764422083",
+    "Name": "rag-stream-api-key-RagStreamAPIRagChatApiC342348C",
     "StageKeys": [
      {
       "RestApiId": {

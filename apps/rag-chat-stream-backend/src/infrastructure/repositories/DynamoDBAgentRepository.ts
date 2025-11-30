@@ -30,6 +30,8 @@ export class DynamoDBAgentRepository implements IAgentRepository {
               description: agent.description,
               knowledgeSpaceIds: agent.knowledgeSpaceIds,
               strictRAG: agent.strictRAG,
+              systemPrompt: agent.systemPrompt,
+              preset: agent.preset,
               createdAt: agent.createdAt.toISOString()
             }
           }));
@@ -93,6 +95,8 @@ export class DynamoDBAgentRepository implements IAgentRepository {
         result.Item.knowledgeSpaceIds,
         result.Item.strictRAG,
         result.Item.description,
+        result.Item.systemPrompt,
+        result.Item.preset,
         new Date(result.Item.createdAt)
       );
     } catch (error) {

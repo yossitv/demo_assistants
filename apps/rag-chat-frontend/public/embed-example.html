@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Widget Embed Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .embed-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .embed-box {
+      flex: 1;
+      min-width: 350px;
+    }
+
+    .embed-box h3 {
+      margin-top: 0;
+      color: #555;
+    }
+
+    iframe {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 12px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat Widget Embed Example</h1>
+
+  <div class="container">
+    <h2>How to Embed</h2>
+    <p>
+      Copy the iframe code below and paste it into your website where you want the chat widget to appear.
+      Replace <code>your-agent-id</code> with your actual agent ID.
+    </p>
+
+    <h3>Embed Code:</h3>
+    <pre><code>&lt;iframe
+  src="http://localhost:3000/embed/your-agent-id"
+  width="400"
+  height="600"
+  frameborder="0"
+  allow="clipboard-write"
+  style="border: none; border-radius: 8px;"
+&gt;&lt;/iframe&gt;</code></pre>
+
+    <div class="note">
+      <strong>Note:</strong> Replace <code>http://localhost:3000</code> with your production domain when deploying.
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Live Examples</h2>
+    <p>Below are examples of the chat widget embedded at different sizes:</p>
+
+    <div class="embed-container">
+      <div class="embed-box">
+        <h3>Standard Size (400x600)</h3>
+        <iframe
+          src="http://localhost:3000/embed/test-agent-123"
+          width="400"
+          height="600"
+          frameborder="0"
+          allow="clipboard-write"
+        ></iframe>
+      </div>
+
+      <div class="embed-box">
+        <h3>Compact Size (350x500)</h3>
+        <iframe
+          src="http://localhost:3000/embed/test-agent-123"
+          width="350"
+          height="500"
+          frameborder="0"
+          allow="clipboard-write"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Responsive Embed</h2>
+    <p>For a responsive embed that adapts to container width:</p>
+    <pre><code>&lt;div style="position: relative; padding-bottom: 150%; height: 0; max-width: 400px;"&gt;
+  &lt;iframe
+    src="http://localhost:3000/embed/your-agent-id"
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+    frameborder="0"
+    allow="clipboard-write"
+  &gt;&lt;/iframe&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <div class="container">
+    <h2>Features</h2>
+    <ul>
+      <li>Minimal UI optimized for embedding</li>
+      <li>Transparent background support</li>
+      <li>No navigation or external chrome</li>
+      <li>Compact mode with optimized spacing</li>
+      <li>Works at various dimensions</li>
+      <li>Powered by AI Assistant branding included</li>
+    </ul>
+  </div>
+</body>
+</html>

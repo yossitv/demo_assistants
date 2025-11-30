@@ -5,6 +5,7 @@ export interface APIGatewayProxyEvent {
   headers: { [key: string]: string };
   httpMethod: string;
   path: string;
+  pathParameters?: { [key: string]: string } | null;
   queryStringParameters: { [key: string]: string } | null;
   requestContext: {
     authorizer?: {

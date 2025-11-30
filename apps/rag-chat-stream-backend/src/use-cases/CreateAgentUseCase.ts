@@ -1,4 +1,4 @@
-import { Agent } from '../domain/entities/Agent';
+import { Agent, AgentPreset } from '../domain/entities/Agent';
 import { IAgentRepository } from '../domain/repositories/IAgentRepository';
 import { ILogger } from '../domain/services/ILogger';
 import { CloudWatchLogger } from '../infrastructure/services/CloudWatchLogger';
@@ -9,6 +9,8 @@ export interface CreateAgentInput {
   knowledgeSpaceIds: string[];
   strictRAG: boolean;
   description?: string;
+  systemPrompt?: string;
+  preset?: AgentPreset;
   requestId?: string;
 }
 
@@ -36,6 +38,7 @@ export class CreateAgentUseCase {
       name: input.name,
       knowledgeSpaceCount: input.knowledgeSpaceIds.length,
       strictRAG: input.strictRAG,
+      preset: input.preset,
       requestId: input.requestId
     });
 
@@ -47,6 +50,8 @@ export class CreateAgentUseCase {
         input.knowledgeSpaceIds,
         input.strictRAG,
         input.description,
+        input.systemPrompt,
+        input.preset,
         new Date()
       );
 
@@ -69,6 +74,7 @@ export class CreateAgentUseCase {
           name: input.name,
           knowledgeSpaceIds: input.knowledgeSpaceIds,
           strictRAG: input.strictRAG,
+          preset: input.preset,
           requestId: input.requestId
         });
       }
