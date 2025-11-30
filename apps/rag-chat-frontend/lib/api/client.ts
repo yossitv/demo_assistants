@@ -106,12 +106,11 @@ export class ApiClient {
       ...headers,
     };
 
-    // Prefer API key when both are present to satisfy the custom authorizer expectations
-    if (this.apiKey) {
-      requestHeaders['Authorization'] = this.apiKey;
-    } else if (this.jwtToken) {
-      // Fallback to JWT bearer if no API key is provided
+    // Add authentication header
+    if (this.jwtToken) {
       requestHeaders['Authorization'] = `Bearer ${this.jwtToken}`;
+    } else if (this.apiKey) {
+      requestHeaders['Authorization'] = this.apiKey;
     }
 
     // Prepare fetch options
@@ -134,8 +133,6 @@ export class ApiClient {
 
       // Handle non-ok responses
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Response:', errorText);
         throw await ApiError.fromResponse(response);
       }
 
@@ -447,6 +444,46 @@ export class ApiClient {
   }
 
   /**
+   * Update an agent
+   */
+  async updateAgent(agentId: string, data: {
+    name: string;
+    description?: string;
+    systemPrompt?: string;
+    knowledgeSpaceIds: string[];
+    strictRAG?: boolean;
+  }): Promise<CreateAgentResponse> {
+    if (!agentId || agentId.trim() === '') {
+      throw new ApiError('Agent ID is required');
+    }
+
+    if (!data.name || data.name.trim() === '') {
+      throw new ApiError('Agent name is required');
+    }
+
+    if (!data.knowledgeSpaceIds || data.knowledgeSpaceIds.length === 0) {
+      throw new ApiError('At least one Knowledge Space ID is required');
+    }
+
+    const response = await this.fetch<BackendCreateAgentResponse>({
+      method: 'PUT',
+      path: `/v1/agent/${agentId}`,
+      body: data,
+    });
+
+    return {
+      agent: {
+        id: response.agentId,
+        name: data.name.trim(),
+        description: data.description?.trim() || '',
+        strictRAG: data.strictRAG ?? true,
+        knowledgeSpaceId: data.knowledgeSpaceIds[0],
+      },
+      status: response.status,
+    };
+  }
+
+  /**
    * Delete an agent
    */
   async deleteAgent(agentId: string): Promise<void> {
@@ -456,7 +493,7 @@ export class ApiClient {
 
     await this.fetch<void>({
       method: 'DELETE',
-      path: `/agents/${agentId}`,
+      path: `/v1/agent/${agentId}`,
     });
   }
 
@@ -470,7 +507,7 @@ export class ApiClient {
 
     await this.fetch<void>({
       method: 'DELETE',
-      path: `/knowledge-spaces/${knowledgeSpaceId}`,
+      path: `/v1/knowledge/${knowledgeSpaceId}`,
     });
   }
 

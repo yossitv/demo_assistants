@@ -19,13 +19,13 @@ import { IChunkingService } from '../../domain/services/IChunkingService';
 import { ICrawlerService } from '../../domain/services/ICrawlerService';
 import { ILLMService } from '../../domain/services/ILLMService';
 import { ILogger } from '../../domain/services/ILogger';
-import { IProductParserService } from '../../domain/services/IProductParserService';
+import { IContentExtractionService } from '../../domain/services/IContentExtractionService';
 import { OpenAIEmbeddingService } from '../services/OpenAIEmbeddingService';
 import { TiktokenChunkingService } from '../services/TiktokenChunkingService';
 import { CheerioCrawlerService } from '../services/CheerioCrawlerService';
 import { OpenAILLMService } from '../services/OpenAILLMService';
 import { CloudWatchLogger } from '../services/CloudWatchLogger';
-import { ProductParserService } from '../services/ProductParserService';
+import { LLMContentExtractionService } from '../services/LLMContentExtractionService';
 
 // Use Cases
 import { CreateKnowledgeSpaceUseCase } from '../../use-cases/CreateKnowledgeSpaceUseCase';
@@ -69,7 +69,7 @@ export class DIContainer {
   private readonly crawlerService: ICrawlerService;
   private readonly llmService: ILLMService;
   private readonly logger: ILogger;
-  private readonly productParserService: IProductParserService;
+  private readonly contentExtractionService: IContentExtractionService;
 
   // Use Cases
   private readonly createKnowledgeSpaceUseCase: CreateKnowledgeSpaceUseCase;
@@ -151,7 +151,10 @@ export class DIContainer {
       retryOptions
     );
 
-    this.productParserService = new ProductParserService();
+    this.contentExtractionService = new LLMContentExtractionService(
+      process.env.OPENAI_API_KEY!,
+      this.logger
+    );
 
     // Initialize use cases (Use Case Layer)
     this.createKnowledgeSpaceUseCase = new CreateKnowledgeSpaceUseCase(
@@ -166,7 +169,7 @@ export class DIContainer {
     this.createProductKnowledgeSpaceUseCase = new CreateProductKnowledgeSpaceUseCase(
       this.knowledgeSpaceRepo,
       this.vectorRepo,
-      this.productParserService,
+      this.contentExtractionService,
       this.embeddingService,
       this.logger
     );

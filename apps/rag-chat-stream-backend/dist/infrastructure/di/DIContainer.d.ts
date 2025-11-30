@@ -25,7 +25,7 @@ export declare class DIContainer {
     private readonly crawlerService;
     private readonly llmService;
     private readonly logger;
-    private readonly productParserService;
+    private readonly contentExtractionService;
     private readonly createKnowledgeSpaceUseCase;
     private readonly createProductKnowledgeSpaceUseCase;
     private readonly listKnowledgeSpacesUseCase;

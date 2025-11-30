@@ -17,6 +17,7 @@ interface NavLink {
  */
 const NAV_LINKS: NavLink[] = [
   { href: '/', label: 'Home' },
+  { href: '/dashboard', label: 'Dashboard' },
   { href: '/knowledge', label: 'Knowledge Spaces' },
   { href: '/agents/create', label: 'Create Agent' },
 ];

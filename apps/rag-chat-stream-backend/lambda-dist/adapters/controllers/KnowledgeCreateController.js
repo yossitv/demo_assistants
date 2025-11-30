@@ -171,22 +171,25 @@ class KnowledgeCreateController {
     }
     async handleMultipartUpload(event, tenantId, userId, requestId, authMethod, startTime) {
         try {
-            const { name, fileContent } = this.parseMultipartFormData(event);
+            const { name, fileContent, mode } = this.parseMultipartFormData(event);
             if (!name || !fileContent) {
                 return (0, cors_1.errorResponse)(400, 'Missing required fields: name and file');
             }
-            this.logger.info('Product knowledge space creation request', {
+            const knowledgeMode = (mode || 'product_recommend');
+            this.logger.info('Knowledge space creation request (file upload)', {
                 tenantId,
                 userId,
                 requestId,
                 name,
                 fileSize: fileContent.length,
+                mode: knowledgeMode,
                 authMethod
             });
             const result = await this.productUseCase.execute({
                 tenantId,
                 name,
                 fileContent,
+                mode: knowledgeMode,
                 requestId
             });
             const durationMs = Date.now() - startTime;
@@ -238,6 +241,7 @@ class KnowledgeCreateController {
         const parts = body.split(`--${boundary}`);
         let name;
         let fileContent;
+        let mode;
         for (const part of parts) {
             if (part.includes('Content-Disposition')) {
                 const nameMatch = part.match(/name="([^"]+)"/);
@@ -253,9 +257,12 @@ class KnowledgeCreateController {
                 else if (fieldName === 'file') {
                     fileContent = content;
                 }
+                else if (fieldName === 'mode') {
+                    mode = content.trim();
+                }
             }
         }
-        return { name, fileContent };
+        return { name, fileContent, mode };
     }
 }
 exports.KnowledgeCreateController = KnowledgeCreateController;

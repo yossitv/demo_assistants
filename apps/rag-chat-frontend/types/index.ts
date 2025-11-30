@@ -83,3 +83,14 @@ export interface Product {
  * Agent preset types
  */
 export type AgentPreset = 'none' | 'product_recommendation';
+
+/**
+ * Agent update request
+ */
+export interface AgentUpdateRequest {
+  name: string;
+  description?: string;
+  systemPrompt?: string;
+  knowledgeSpaceIds: string[];
+  strictRAG?: boolean;
+}

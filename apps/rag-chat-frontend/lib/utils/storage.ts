@@ -116,6 +116,32 @@ function updateRecentAgents(agentId: string): void {
 }
 
 /**
+ * Remove an agent from localStorage
+ * @param agentId - The ID of the agent to remove
+ */
+export function removeAgent(agentId: string): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    const agents = getAgents();
+    const filteredAgents = agents.filter((a) => a.id !== agentId);
+    localStorage.setItem(AGENTS_STORAGE_KEY, JSON.stringify(filteredAgents));
+
+    // Also remove from recent agents
+    const recentIdsJson = localStorage.getItem(RECENT_AGENTS_KEY);
+    if (recentIdsJson) {
+      const recentIds: string[] = JSON.parse(recentIdsJson);
+      const filteredRecentIds = recentIds.filter((id) => id !== agentId);
+      localStorage.setItem(RECENT_AGENTS_KEY, JSON.stringify(filteredRecentIds));
+    }
+  } catch (error) {
+    console.error('Error removing agent from localStorage:', error);
+  }
+}
+
+/**
  * Clear all agents from localStorage
  */
 export function clearAgents(): void {

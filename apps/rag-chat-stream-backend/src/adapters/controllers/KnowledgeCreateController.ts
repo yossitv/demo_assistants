@@ -1,5 +1,6 @@
 import { CreateKnowledgeSpaceUseCase } from '../../use-cases/CreateKnowledgeSpaceUseCase';
 import { CreateProductKnowledgeSpaceUseCase } from '../../use-cases/CreateProductKnowledgeSpaceUseCase';
+import { KnowledgeSpaceMode } from '../../domain/entities/KnowledgeSpaceMode';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from '../../shared/types';
 import { validateKnowledgeCreateBody } from '../../shared/validation';
 import { ValidationError } from '../../shared/errors';
@@ -211,18 +212,21 @@ export class KnowledgeCreateController {
     startTime: number
   ): Promise<APIGatewayProxyResult> {
     try {
-      const { name, fileContent } = this.parseMultipartFormData(event);
+      const { name, fileContent, mode } = this.parseMultipartFormData(event);
 
       if (!name || !fileContent) {
         return errorResponse(400, 'Missing required fields: name and file');
       }
 
-      this.logger.info('Product knowledge space creation request', {
+      const knowledgeMode = (mode || 'product_recommend') as KnowledgeSpaceMode;
+
+      this.logger.info('Knowledge space creation request (file upload)', {
         tenantId,
         userId,
         requestId,
         name,
         fileSize: fileContent.length,
+        mode: knowledgeMode,
         authMethod
       });
 
@@ -230,6 +234,7 @@ export class KnowledgeCreateController {
         tenantId,
         name,
         fileContent,
+        mode: knowledgeMode,
         requestId
       });
 
@@ -269,7 +274,7 @@ export class KnowledgeCreateController {
     }
   }
 
-  private parseMultipartFormData(event: APIGatewayProxyEvent): { name?: string; fileContent?: string } {
+  private parseMultipartFormData(event: APIGatewayProxyEvent): { name?: string; fileContent?: string; mode?: string } {
     const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
     
     if (!contentType.includes('multipart/form-data')) {
@@ -290,6 +295,7 @@ export class KnowledgeCreateController {
 
     let name: string | undefined;
     let fileContent: string | undefined;
+    let mode: string | undefined;
 
     for (const part of parts) {
       if (part.includes('Content-Disposition')) {
@@ -305,10 +311,12 @@ export class KnowledgeCreateController {
           name = content.trim();
         } else if (fieldName === 'file') {
           fileContent = content;
+        } else if (fieldName === 'mode') {
+          mode = content.trim();
         }
       }
     }
 
-    return { name, fileContent };
+    return { name, fileContent, mode };
   }
 }

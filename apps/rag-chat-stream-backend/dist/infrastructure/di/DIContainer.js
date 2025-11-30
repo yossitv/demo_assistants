@@ -17,7 +17,7 @@ const TiktokenChunkingService_1 = require("../services/TiktokenChunkingService")
 const CheerioCrawlerService_1 = require("../services/CheerioCrawlerService");
 const OpenAILLMService_1 = require("../services/OpenAILLMService");
 const CloudWatchLogger_1 = require("../services/CloudWatchLogger");
-const ProductParserService_1 = require("../services/ProductParserService");
+const LLMContentExtractionService_1 = require("../services/LLMContentExtractionService");
 // Use Cases
 const CreateKnowledgeSpaceUseCase_1 = require("../../use-cases/CreateKnowledgeSpaceUseCase");
 const CreateProductKnowledgeSpaceUseCase_1 = require("../../use-cases/CreateProductKnowledgeSpaceUseCase");
@@ -55,7 +55,7 @@ class DIContainer {
     crawlerService;
     llmService;
     logger;
-    productParserService;
+    contentExtractionService;
     // Use Cases
     createKnowledgeSpaceUseCase;
     createProductKnowledgeSpaceUseCase;
@@ -99,10 +99,10 @@ class DIContainer {
         this.chunkingService = new TiktokenChunkingService_1.TiktokenChunkingService();
         this.crawlerService = new CheerioCrawlerService_1.CheerioCrawlerService(retryOptions);
         this.llmService = new OpenAILLMService_1.OpenAILLMService(this.openai, this.logger, process.env.LLM_MODEL || 'gpt-4', retryOptions);
-        this.productParserService = new ProductParserService_1.ProductParserService();
+        this.contentExtractionService = new LLMContentExtractionService_1.LLMContentExtractionService(process.env.OPENAI_API_KEY, this.logger);
         // Initialize use cases (Use Case Layer)
         this.createKnowledgeSpaceUseCase = new CreateKnowledgeSpaceUseCase_1.CreateKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.crawlerService, this.chunkingService, this.embeddingService, this.logger);
-        this.createProductKnowledgeSpaceUseCase = new CreateProductKnowledgeSpaceUseCase_1.CreateProductKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.productParserService, this.embeddingService, this.logger);
+        this.createProductKnowledgeSpaceUseCase = new CreateProductKnowledgeSpaceUseCase_1.CreateProductKnowledgeSpaceUseCase(this.knowledgeSpaceRepo, this.vectorRepo, this.contentExtractionService, this.embeddingService, this.logger);
         this.listKnowledgeSpacesUseCase = new ListKnowledgeSpacesUseCase_1.ListKnowledgeSpacesUseCase(this.knowledgeSpaceRepo, this.logger);
         this.createAgentUseCase = new CreateAgentUseCase_1.CreateAgentUseCase(this.agentRepo, this.logger);
         this.chatWithAgentUseCase = new ChatWithAgentUseCase_1.ChatWithAgentUseCase(this.agentRepo, this.knowledgeSpaceRepo, this.conversationRepo, this.vectorRepo, this.embeddingService, this.llmService, this.logger);

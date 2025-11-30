@@ -62,6 +62,8 @@ export default function DefaultDashboard() {
   const [selectedKnowledgeId, setSelectedKnowledgeId] = useState<string | null>(null);
   const [knowledgeChunks, setKnowledgeChunks] = useState<string[]>([]);
   const [uploadedFileContent, setUploadedFileContent] = useState<Map<string, string>>(new Map());
+  const [uploadMode, setUploadMode] = useState<'product_recommend' | 'qa' | 'document' | 'description'>('product_recommend');
+  const [viewMode, setViewMode] = useState<'chunks' | 'original'>('chunks');
 
   // Create a fresh client per render to honor apiUrl/apiKey changes.
   const client = useMemo(() => {
@@ -269,6 +271,7 @@ export default function DefaultDashboard() {
       formData.append('file', selectedFile);
       formData.append('name', selectedFile.name.replace(/\.[^/.]+$/, ''));
       formData.append('sourceType', 'file');
+      formData.append('mode', uploadMode);
 
       console.log('Uploading to:', `${apiUrl}/v1/knowledge/create`);
       const response = await fetch(`${apiUrl}/v1/knowledge/create`, {
@@ -307,15 +310,6 @@ export default function DefaultDashboard() {
   const handleViewChunks = async (knowledgeId: string) => {
     setSelectedKnowledgeId(knowledgeId);
     setKnowledgeChunks([]);
-    
-    // アップロードしたファイル内容があれば表示
-    const fileContent = uploadedFileContent.get(knowledgeId);
-    if (fileContent) {
-      setKnowledgeChunks([`【アップロードされた元データ】\n\n${fileContent}`]);
-      setStatus('元データを表示しています');
-      return;
-    }
-    
     setStatus('RAGデータを取得中...');
     
     try {
@@ -435,10 +429,23 @@ export default function DefaultDashboard() {
             <h3 className="text-lg font-semibold mb-2">ファイルアップロード</h3>
             <div className="grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
+                <span>モード選択</span>
+                <select
+                  value={uploadMode}
+                  onChange={(e) => setUploadMode(e.target.value as any)}
+                  className="border rounded px-3 py-2"
+                >
+                  <option value="product_recommend">製品レコメンド（構造化）</option>
+                  <option value="qa">Q&A（質問と回答）</option>
+                  <option value="document">ドキュメント（セクション分割）</option>
+                  <option value="description">説明文（段落分割）</option>
+                </select>
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
                 <span>Markdownファイル (.md)</span>
                 <input
                   type="file"
-                  accept=".md,.markdown"
+                  accept=".md,.markdown,.txt"
                   onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                   className="border rounded px-3 py-2"
                 />
@@ -507,18 +514,47 @@ export default function DefaultDashboard() {
                 </div>
                 {selectedKnowledgeId === ks.id && knowledgeChunks.length > 0 && (
                   <div className="mt-3 p-3 bg-gray-50 rounded border border-gray-200">
-                    <p className="text-sm font-semibold mb-2">
-                      {uploadedFileContent.has(ks.id) ? '📄 アップロードされた元データ' : 'RAG検証結果'}
-                    </p>
-                    {knowledgeChunks.map((chunk, idx) => (
-                      <div key={idx} className="text-sm text-gray-700 whitespace-pre-wrap max-h-96 overflow-y-auto mb-2 bg-white p-2 rounded border">
-                        {chunk}
-                      </div>
-                    ))}
-                    {!uploadedFileContent.has(ks.id) && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        💡 ヒント: 具体的な質問（例: 「社長について教えて」）をチャット画面で試してください
-                      </p>
+                    <div className="flex gap-2 mb-3 border-b pb-2">
+                      <button
+                        onClick={() => setViewMode('chunks')}
+                        className={`px-3 py-1 text-sm rounded ${
+                          viewMode === 'chunks'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        RAGチャンク
+                      </button>
+                      {uploadedFileContent.has(ks.id) && (
+                        <button
+                          onClick={() => setViewMode('original')}
+                          className={`px-3 py-1 text-sm rounded ${
+                            viewMode === 'original'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                        >
+                          元データ
+                        </button>
+                      )}
+                    </div>
+                    
+                    {viewMode === 'chunks' ? (
+                      <>
+                        <p className="text-sm font-semibold mb-2">RAGチャンク一覧</p>
+                        {knowledgeChunks.map((chunk, idx) => (
+                          <div key={idx} className="text-sm text-gray-700 whitespace-pre-wrap max-h-96 overflow-y-auto mb-2 bg-white p-2 rounded border">
+                            {chunk}
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-semibold mb-2">📄 アップロードされた元データ</p>
+                        <div className="text-sm text-gray-700 whitespace-pre-wrap max-h-96 overflow-y-auto bg-white p-2 rounded border">
+                          {uploadedFileContent.get(ks.id)}
+                        </div>
+                      </>
                     )}
                   </div>
                 )}

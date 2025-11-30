@@ -1,13 +1,14 @@
 import { IKnowledgeSpaceRepository } from '../domain/repositories/IKnowledgeSpaceRepository';
 import { IVectorRepository } from '../domain/repositories/IVectorRepository';
 import { IEmbeddingService } from '../domain/services/IEmbeddingService';
-import { IProductParserService } from '../domain/services/IProductParserService';
+import { IContentExtractionService } from '../domain/services/IContentExtractionService';
 import { ILogger } from '../domain/services/ILogger';
-import { ParseError } from '../domain/entities/Product';
+import { KnowledgeSpaceMode } from '../domain/entities/KnowledgeSpaceMode';
 export interface CreateProductKnowledgeSpaceInput {
     tenantId: string;
     name: string;
     fileContent: string;
+    mode?: KnowledgeSpaceMode;
     requestId?: string;
 }
 export interface CreateProductKnowledgeSpaceOutput {
@@ -19,18 +20,17 @@ export interface CreateProductKnowledgeSpaceOutput {
     summary: {
         successCount: number;
         failureCount: number;
-        errors: ParseError[];
+        errors: string[];
     };
 }
 export declare class CreateProductKnowledgeSpaceUseCase {
     private readonly knowledgeSpaceRepo;
     private readonly vectorRepo;
-    private readonly parserService;
+    private readonly extractionService;
     private readonly embeddingService;
     private readonly logger;
-    constructor(knowledgeSpaceRepo: IKnowledgeSpaceRepository, vectorRepo: IVectorRepository, parserService: IProductParserService, embeddingService: IEmbeddingService, logger: ILogger);
+    constructor(knowledgeSpaceRepo: IKnowledgeSpaceRepository, vectorRepo: IVectorRepository, extractionService: IContentExtractionService, embeddingService: IEmbeddingService, logger: ILogger);
     execute(input: CreateProductKnowledgeSpaceInput): Promise<CreateProductKnowledgeSpaceOutput>;
-    private formatProductAsChunk;
     private getCurrentVersion;
 }
 //# sourceMappingURL=CreateProductKnowledgeSpaceUseCase.d.ts.map
