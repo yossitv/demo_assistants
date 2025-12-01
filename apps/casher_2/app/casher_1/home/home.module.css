@@ -83,6 +83,22 @@
   backdrop-filter: blur(12px);
 }
 
+.modeBtn {
+  padding: 10px 14px;
+  background: #e2e8f0;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.modeBtn:hover {
+  background: #cbd5e1;
+}
+
 .langBtn {
   padding: 10px 16px;
   background: transparent;

@@ -31,6 +31,12 @@ export default function HomePage() {
         </div>
         <div className={styles.controls}>
           <button
+            className={styles.modeBtn}
+            onClick={() => router.push("/casher_nomal/home")}
+          >
+            nomal
+          </button>
+          <button
             className={`${styles.langBtn} ${language === "ja" ? styles.active : ""}`}
             onClick={() => setLanguage("ja")}
           >
