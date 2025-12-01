@@ -1,0 +1,1 @@
+{"version":3,"file":"ChunkMetadata.d.ts","sourceRoot":"","sources":["../../../src/domain/value-objects/ChunkMetadata.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,aAAa;IAC5B,KAAK,EAAE,MAAM,CAAC;IACd,OAAO,CAAC,EAAE,MAAM,CAAC;IACjB,OAAO,EAAE,MAAM,CAAC;CACjB"}

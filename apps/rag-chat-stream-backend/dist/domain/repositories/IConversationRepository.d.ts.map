@@ -1,0 +1,1 @@
+{"version":3,"file":"IConversationRepository.d.ts","sourceRoot":"","sources":["../../../src/domain/repositories/IConversationRepository.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,0BAA0B,CAAC;AAExD;;;GAGG;AACH,MAAM,WAAW,uBAAuB;IACtC;;;;OAIG;IACH,IAAI,CAAC,YAAY,EAAE,YAAY,GAAG,OAAO,CAAC,IAAI,CAAC,CAAC;CACjD"}

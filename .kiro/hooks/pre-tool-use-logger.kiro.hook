@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Pre-Tool Use Logger & Safety Validator",
+  "description": "Log task_start events and block obviously dangerous operations before the tool runs.",
+  "version": "1",
+  "when": {
+    "type": "preToolUse"
+  },
+  "then": {
+    "type": "exec",
+    "command": "bash",
+    "args": [".kiro/hooks/log_pre_tool.sh"],
+    "timeout_ms": 30000
+  }
+}

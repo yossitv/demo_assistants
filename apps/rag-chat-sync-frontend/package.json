@@ -1,0 +1,48 @@
+{
+  "name": "rag-chat-sync-frontend",
+  "version": "0.1.0",
+  "description": "RAG Chat Sync Frontend - Next.js web application for RAG chat interface",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "build:vercel": "next build",
+    "build:standalone": "NEXT_OUTPUT_MODE=standalone next build",
+    "build:static": "NEXT_OUTPUT_MODE=export next build",
+    "build:production": "npm run lint && npm run test && next build",
+    "serve": "npm run build && npm run start",
+    "preview:static": "npm run build:static && npx serve@latest out",
+    "type-check": "tsc --noEmit",
+    "validate": "npm run type-check && npm run lint && npm run test"
+  },
+  "dependencies": {
+    "next": "16.0.3",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-markdown": "^10.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.3",
+    "fast-check": "^4.3.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "tailwindcss": "^4",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  }
+}

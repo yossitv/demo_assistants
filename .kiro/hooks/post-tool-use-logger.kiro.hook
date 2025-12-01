@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Post Tool Use Logger",
+  "description": "Log task_end events (tool_name, input, response) to events.jsonl after each tool execution.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse"
+  },
+  "then": {
+    "type": "exec",
+    "command": "bash",
+    "args": [".kiro/hooks/log_post_tool.sh"],
+    "timeout_ms": 30000
+  }
+}

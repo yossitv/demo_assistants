@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+  "tmux": {
+    "command": "npx",
+    "args": ["-y", "tmux-mcp"]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    },
+    "codex": {
+      "command": "codex",
+      "args": [
+        "mcp-server"
+      ],
+      "env": {
+        "RUST_LOG": "error"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "codex"
+      ]
+    }
+  }
+}
