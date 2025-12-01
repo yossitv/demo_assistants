@@ -46,7 +46,7 @@ export default function OrderPage() {
       </p>
 
       <div className={styles.orderLayout}>
-        <div>
+        <div className={styles.productColumn}>
           <div style={{ marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#1e293b", marginBottom: "0.5rem", letterSpacing: "-0.01em" }}>
               {t("商品を選ぶ", "Pick your order")}
@@ -58,10 +58,12 @@ export default function OrderPage() {
               )}
             </p>
           </div>
-          <ProductList />
+          <div className={styles.productScroll}>
+            <ProductList />
+          </div>
         </div>
 
-        <div className={styles.sideStack}>
+        <div className={`${styles.sideStack} ${styles.sideStackFixed}`}>
           <Cart />
           <AgentMeeting />
           <button
