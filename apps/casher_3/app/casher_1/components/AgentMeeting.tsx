@@ -6,7 +6,7 @@ import { useConversation } from "../providers/ConversationProvider";
 import SharedAvatarIframe from "../../components/SharedAvatarIframe";
 import styles from "../styles.module.css";
 
-const AUTO_COLLAPSE_MS = 5000;
+const AUTO_COLLAPSE_MS = 7000;
 const AUTO_START = process.env.NEXT_PUBLIC_TAVUS_AUTO_START === "true";
 
 export function AgentMeeting() {
@@ -146,39 +146,46 @@ export function AgentMeeting() {
               </p>
             </>
           ) : (
-            <p style={{ color: "#1e293b", fontWeight: 700, margin: 0 }}>
-              {t("接続中: ビデオをタップで拡大できます。", "Connected: tap the video to expand.")}
-            </p>
+            <div className={styles.agentInlineAction}>
+              <p style={{ color: "#1e293b", fontWeight: 700, margin: 0 }}>
+                {t("接続中: ビデオをタップで拡大できます。", "Connected: tap the video to expand.")}
+              </p>
+              {!isExpanded && conversationUrl && (
+                <button
+                  className={styles.agentCardExpandSmall}
+                  onClick={handleExpand}
+                  aria-label={t("ビデオを拡大", "Expand video")}
+                  type="button"
+                >
+                  ⤢
+                </button>
+              )}
+            </div>
+          )}
+
+          {conversationUrl && (
+            <div
+              className={[
+                styles.agentIframeShell,
+                isExpanded ? styles.agentIframeExpanded : styles.agentIframeInline,
+                isConnected ? "" : styles.agentIframeHidden,
+              ].join(" ")}
+            >
+              {isExpanded && (
+                <div className={styles.sharedAgentChrome}>
+                  <button className={styles.closeButton} onClick={handleCollapse}>
+                    ×
+                  </button>
+                  <button className={styles.endSessionButton} onClick={handleEndSession}>
+                    End Tavus
+                  </button>
+                </div>
+              )}
+              <SharedAvatarIframe conversationUrl={conversationUrl} />
+            </div>
           )}
         </div>
       </div>
-
-      {conversationUrl && (
-        <div
-          className={[
-            styles.agentIframeShell,
-            isExpanded ? styles.agentIframeExpanded : styles.agentIframeInline,
-            isConnected ? "" : styles.agentIframeHidden,
-          ].join(" ")}
-          onClick={() => {
-            if (!isExpanded) {
-              handleExpand();
-            }
-          }}
-        >
-          {isExpanded && (
-            <div className={styles.sharedAgentChrome}>
-              <button className={styles.closeButton} onClick={handleCollapse}>
-                ×
-              </button>
-              <button className={styles.endSessionButton} onClick={handleEndSession}>
-                End Tavus
-              </button>
-            </div>
-          )}
-          <SharedAvatarIframe conversationUrl={conversationUrl} />
-        </div>
-      )}
 
       {isConnected && isExpanded && (
         <div className={styles.agentOverlay} onClick={handleCollapse} aria-label="Collapse staff call" />
