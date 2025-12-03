@@ -10,6 +10,11 @@ import {
   BackendCreateAgentResponse,
 } from './types';
 
+export interface ChatStreamChunk {
+  content?: string;
+  citedUrls?: string[];
+}
+
 /**
  * API Client configuration interface
  */
@@ -532,7 +537,7 @@ export class ApiClient {
     agentId: string,
     message: string | Array<{ role: 'user' | 'assistant' | 'system'; content: string }>,
     signal?: AbortSignal
-  ): AsyncGenerator<string, void, unknown> {
+  ): AsyncGenerator<ChatStreamChunk, void, unknown> {
     if (!agentId || agentId.trim() === '') {
       throw new ApiError('Agent ID is required');
     }
@@ -605,9 +610,12 @@ export class ApiClient {
 
           try {
             const json = JSON.parse(data);
-            const content = json.choices?.[0]?.delta?.content;
-            if (content) {
-              yield content;
+            const delta = json.choices?.[0]?.delta || json.choices?.[0]?.message;
+            const content = delta?.content;
+            const citedUrls = delta?.cited_urls;
+
+            if (content || (citedUrls && citedUrls.length > 0)) {
+              yield { content, citedUrls };
             }
           } catch {
             // Ignore invalid JSON

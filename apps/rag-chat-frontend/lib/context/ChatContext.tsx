@@ -66,6 +66,7 @@ export function ChatProvider({ children, initialMessages = [], useStreaming = tr
       id: assistantMessageId,
       role: 'assistant',
       content: '',
+      cited_urls: [],
       createdAt: new Date().toISOString(),
     };
 
@@ -87,7 +88,11 @@ export function ChatProvider({ children, initialMessages = [], useStreaming = tr
           setMessages(prev =>
             prev.map(msg =>
               msg.id === assistantMessageId
-                ? { ...msg, content: msg.content + chunk }
+                ? {
+                    ...msg,
+                    content: msg.content + (chunk.content || ''),
+                    cited_urls: chunk.citedUrls ?? msg.cited_urls,
+                  }
                 : msg
             )
           );

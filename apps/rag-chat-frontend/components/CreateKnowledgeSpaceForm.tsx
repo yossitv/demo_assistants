@@ -241,6 +241,32 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
     return Array.from(collected);
   };
 
+  const collectAndSet = async (startUrl: string, autoShow: boolean = false): Promise<string[]> => {
+    setCollectedUrls([]);
+    setCollectedCount(0);
+    setShowCollectedUrls(autoShow);
+    setCollectStatus('Starting sitemap lookup...');
+
+    const collected = await collectUrlsFromSitemap(startUrl);
+    const uniqueUrls = Array.from(new Set([startUrl.trim(), ...collected]));
+
+    if (uniqueUrls.length === 0) {
+      throw new Error('No URLs were collected from the sitemap');
+    }
+
+    setCollectedUrls(uniqueUrls);
+    setCollectedCount(uniqueUrls.length);
+    setCollectStatus(
+      uniqueUrls.length >= MAX_COLLECTED_URLS
+        ? `Collected ${uniqueUrls.length} URLs (limit reached)`
+        : `Collected ${uniqueUrls.length} URLs`
+    );
+    if (autoShow) {
+      setShowCollectedUrls(true);
+    }
+    return uniqueUrls;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -263,23 +289,7 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
       if (mode === 'manual') {
         urlsToSubmit = validUrls;
       } else {
-        setCollectedUrls([]);
-        setShowCollectedUrls(false);
-        setCollectedCount(0);
-        setCollectStatus('Starting sitemap lookup...');
-        const collected = await collectUrlsFromSitemap(sitemapUrl.trim());
-        const uniqueUrls = Array.from(new Set([sitemapUrl.trim(), ...collected]));
-        if (uniqueUrls.length === 0) {
-          throw new Error('No URLs were collected from the sitemap');
-        }
-        setCollectedUrls(uniqueUrls);
-        setCollectedCount(uniqueUrls.length);
-        setCollectStatus(
-          uniqueUrls.length >= MAX_COLLECTED_URLS
-            ? `Collected ${uniqueUrls.length} URLs (limit reached)`
-            : `Collected ${uniqueUrls.length} URLs`
-        );
-        urlsToSubmit = uniqueUrls;
+        urlsToSubmit = await collectAndSet(sitemapUrl.trim(), false);
       }
 
       const response = await apiClient.createKnowledgeSpace(name.trim(), urlsToSubmit);
@@ -323,6 +333,32 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
   const handleRetry = () => {
     setError(null);
     handleSubmit(new Event('submit') as unknown as React.FormEvent);
+  };
+
+  const handlePreview = async () => {
+    const trimmed = sitemapUrl.trim();
+    setError(null);
+    setSuccess(null);
+    if (!trimmed) {
+      setSitemapError('URL is required');
+      if (sitemapRef.current) sitemapRef.current.focus({ preventScroll: true });
+      return;
+    }
+    if (!isValidUrl(trimmed)) {
+      setSitemapError('Invalid URL format (must start with http:// or https://)');
+      if (sitemapRef.current) sitemapRef.current.focus({ preventScroll: true });
+      return;
+    }
+    setSitemapError(null);
+    setCollecting(true);
+    try {
+      await collectAndSet(trimmed, true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to collect URLs from sitemap';
+      setError(message);
+    } finally {
+      setCollecting(false);
+    }
   };
 
   useEffect(() => {
@@ -617,11 +653,11 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
             <p className="text-xs text-gray-600">
               We will try common sitemap locations (sitemap.xml, sitemap_index.xml) for the same domain, up to {MAX_COLLECTED_URLS} URLs and depth {MAX_SITEMAP_DEPTH}. CORS restrictions may prevent fetching some sitemaps.
             </p>
-            {collectStatus && (
-              <div className="flex items-center gap-2 text-xs text-gray-700 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              {collectStatus && (
+                <div className="flex items-center gap-2 text-xs text-gray-700 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 <span>{collectStatus}</span>
                 <span className="text-gray-500">({collectedCount} collected)</span>
               </div>
@@ -636,6 +672,7 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
                     type="button"
                     onClick={() => setShowCollectedUrls(prev => !prev)}
                     className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                    disabled={collecting || loading}
                   >
                     {showCollectedUrls ? 'Hide URLs' : 'Show URLs'}
                   </button>
@@ -648,6 +685,28 @@ const CreateKnowledgeSpaceForm: React.FC<CreateKnowledgeSpaceFormProps> = ({ onS
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+            )}
+            {mode === 'sitemap' && (
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handlePreview}
+                  disabled={collecting || loading}
+                  className="inline-flex items-center justify-center px-4 py-2 min-h-[40px] text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {collecting ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Previewing...
+                    </>
+                  ) : (
+                    'Preview sitemap URLs'
+                  )}
+                </button>
+                {collectedCount > 0 && (
+                  <p className="text-xs text-gray-600">Collected: {collectedCount}</p>
                 )}
               </div>
             )}

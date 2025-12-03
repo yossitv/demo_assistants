@@ -228,6 +228,7 @@ export default function DefaultDashboard() {
       setAbortController(controller);
       
       let fullContent = '';
+      let citedUrls: string[] | undefined;
       const stream = client.chatStream(
         agentIdToUse,
         newHistory.map((m) => ({ role: m.role, content: m.content })),
@@ -235,8 +236,13 @@ export default function DefaultDashboard() {
       );
 
       for await (const chunk of stream) {
-        fullContent += chunk;
-        setChatHistory([...newHistory, { role: 'assistant', content: fullContent }]);
+        if (chunk.citedUrls && chunk.citedUrls.length > 0) {
+          citedUrls = chunk.citedUrls;
+        }
+        if (chunk.content) {
+          fullContent += chunk.content;
+        }
+        setChatHistory([...newHistory, { role: 'assistant', content: fullContent, cited_urls: citedUrls }]);
       }
       setAbortController(null);
     } catch (err) {
