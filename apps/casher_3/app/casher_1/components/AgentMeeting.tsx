@@ -3,11 +3,51 @@ import { useState, useRef, useEffect } from "react";
 import { useCart } from "../providers/CartProvider";
 import { useLanguage } from "../providers/LanguageProvider";
 import { useConversation } from "../providers/ConversationProvider";
+import { PRODUCTS } from "../data/products";
+import type { CartItem, Language } from "../types";
 import SharedAvatarIframe from "../../components/SharedAvatarIframe";
 import styles from "../styles.module.css";
 
 const AUTO_COLLAPSE_MS = 7000;
 const AUTO_START = process.env.NEXT_PUBLIC_TAVUS_AUTO_START === "true";
+
+const toTavusLanguage = (language: Language) =>
+  language === "ja" ? "japanese" : "english";
+
+const formatProductKnowledge = (language: Language) => {
+  const header =
+    language === "ja"
+      ? "商品ナレッジ（名称・価格・説明）"
+      : "Product knowledge (name, price, description)";
+
+  const catalog = PRODUCTS.map((product) => {
+    const name = product.name[language];
+    const description = product.description[language];
+    const price = `¥${product.price.toLocaleString()}`;
+    return `- ${name} (${price}): ${description}`;
+  }).join("\n");
+
+  return [header, catalog].join("\n");
+};
+
+const formatCartContext = (language: Language, items: CartItem[]) => {
+  if (items.length === 0) {
+    return language === "ja"
+      ? "カートは空です。おすすめ提案をしてください。"
+      : "Cart is empty; offer a recommendation.";
+  }
+
+  const summary = items
+    .map(
+      (item) =>
+        `${item.product.name[language]} x${item.quantity} (¥${item.product.price.toLocaleString()})`,
+    )
+    .join(", ");
+
+  return language === "ja"
+    ? `現在のカート: ${summary}。合計商品数: ${items.length}。`
+    : `Current cart: ${summary}. Total items: ${items.length}.`;
+};
 
 export function AgentMeeting() {
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
@@ -16,8 +56,11 @@ export function AgentMeeting() {
   const [isConnected, setIsConnected] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const autoCollapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { items } = useCart();
   const { language, t } = useLanguage();
+  const { items } = useCart();
+  const prevLanguage = useRef<Language>(language);
+  const isSwitchingLanguage = useRef(false);
+  const activeRequestId = useRef(0);
   const { conversationId, setConversationId } = useConversation();
   const hasStarted = useRef(false);
 
@@ -55,9 +98,42 @@ export function AgentMeeting() {
     }
   }, [conversationId, isConnected]);
 
+  useEffect(() => {
+    if (prevLanguage.current === language) return;
+    prevLanguage.current = language;
+    if (isSwitchingLanguage.current) return;
+
+    const shouldRestart = isConnected || loading;
+
+    const switchLanguage = async () => {
+      isSwitchingLanguage.current = true;
+      // Invalidate any in-flight startConversation call.
+      activeRequestId.current += 1;
+      hasStarted.current = false;
+
+      try {
+        if (conversationId) {
+          await handleEndSession();
+        } else {
+          setIsConnected(false);
+          setConversationUrl(null);
+        }
+
+        if (shouldRestart) {
+          await startConversation();
+        }
+      } finally {
+        isSwitchingLanguage.current = false;
+      }
+    };
+
+    void switchLanguage();
+  }, [language, isConnected, loading, conversationId]);
+
   const startConversation = async () => {
     if (hasStarted.current) return;
     hasStarted.current = true;
+    const requestId = ++activeRequestId.current;
     setLoading(true);
     setError(null);
 
@@ -66,16 +142,30 @@ export function AgentMeeting() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          language: language === "ja" ? "japanese" : "english",
-          conversational_context: `Customer cart: ${items
-            .map((item) => `${item.product.name[language]} x${item.quantity} (¥${item.product.price})`)
-            .join(", ")}. Total items: ${items.length}.`,
+          language: toTavusLanguage(language),
+          properties: {
+            participant_left_timeout: 0,
+            language: toTavusLanguage(language),
+          },
+          conversational_context: [
+            formatProductKnowledge(language),
+            formatCartContext(language, items),
+            language === "ja"
+              ? "上記の商品ナレッジを参照して接客してください。"
+              : "Use the catalog above when assisting the customer.",
+          ].join("\n\n"),
         }),
       });
 
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error ?? "Failed to start conversation");
+      }
+
+      if (activeRequestId.current !== requestId) {
+        // A newer request superseded this one (likely due to language switch).
+        hasStarted.current = false;
+        return;
       }
 
       if (data.conversation_url && data.conversation_id) {
