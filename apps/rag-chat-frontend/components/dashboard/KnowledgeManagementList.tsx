@@ -6,18 +6,40 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { KnowledgeSpace } from '@/types';
 import { apiClient } from '@/lib/api/client';
 
-export function KnowledgeManagementList() {
-  const { knowledgeSpaces, loading, error, refetch, deleteKnowledgeSpace, getLinkedAgentCount } = useKnowledgeManagement();
+interface KnowledgeManagementListProps {
+  knowledgeSpaces?: KnowledgeSpace[];
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
+  onDeleteKnowledge?: (id: string) => Promise<void> | void;
+  getLinkedAgentCount?: (id: string) => number;
+}
+
+export function KnowledgeManagementList({
+  knowledgeSpaces: injectedKnowledgeSpaces,
+  loading: injectedLoading,
+  error: injectedError,
+  onRefresh,
+  onDeleteKnowledge,
+  getLinkedAgentCount,
+}: KnowledgeManagementListProps = {}) {
+  const { knowledgeSpaces, loading, error, refetch, deleteKnowledgeSpace, getLinkedAgentCount: internalLinkedCount } = useKnowledgeManagement();
   const [deletingKnowledge, setDeletingKnowledge] = useState<KnowledgeSpace | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [selectedKnowledgeId, setSelectedKnowledgeId] = useState<string | null>(null);
   const [knowledgeChunks, setKnowledgeChunks] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'chunks' | 'original'>('chunks');
+
+  const displayedKnowledgeSpaces = injectedKnowledgeSpaces ?? knowledgeSpaces;
+  const isLoading = injectedLoading ?? loading;
+  const displayError = injectedError ?? error;
+  const linkedCount = getLinkedAgentCount ?? internalLinkedCount;
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!injectedKnowledgeSpaces) {
+      refetch();
+    }
+  }, [injectedKnowledgeSpaces, refetch]);
 
   useEffect(() => {
     if (toast) {
@@ -31,7 +53,11 @@ export function KnowledgeManagementList() {
 
     setDeleteLoading(true);
     try {
-      await deleteKnowledgeSpace(deletingKnowledge.id);
+      if (onDeleteKnowledge) {
+        await onDeleteKnowledge(deletingKnowledge.id);
+      } else {
+        await deleteKnowledgeSpace(deletingKnowledge.id);
+      }
       setToast({ message: 'Knowledge space deleted', type: 'success' });
       setDeletingKnowledge(null);
     } catch (err) {
@@ -91,14 +117,14 @@ export function KnowledgeManagementList() {
     return colors[status as keyof typeof colors] || colors.processing;
   };
 
-  if (loading && knowledgeSpaces.length === 0) {
+  if (isLoading && displayedKnowledgeSpaces.length === 0) {
     return <div className="text-center py-8">Loading...</div>;
   }
 
-  if (error) {
+  if (displayError) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-        Error: {error}
+        Error: {displayError}
       </div>
     );
   }
@@ -107,13 +133,15 @@ export function KnowledgeManagementList() {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Knowledge Spaces</h2>
-        <button
-          onClick={refetch}
-          disabled={loading}
-          className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
-        >
-          Refresh
-        </button>
+        {(onRefresh || refetch) && (
+          <button
+            onClick={() => (onRefresh ? onRefresh() : refetch())}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+          >
+            Refresh
+          </button>
+        )}
       </div>
 
       {toast && (
@@ -122,7 +150,7 @@ export function KnowledgeManagementList() {
         </div>
       )}
 
-      {knowledgeSpaces.length === 0 ? (
+      {displayedKnowledgeSpaces.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           No knowledge spaces found
         </div>
@@ -140,7 +168,7 @@ export function KnowledgeManagementList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {knowledgeSpaces.map((ks) => (
+              {displayedKnowledgeSpaces.map((ks) => (
                 <tr key={ks.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{ks.name}</td>
                   <td className="px-6 py-4">
@@ -208,8 +236,8 @@ export function KnowledgeManagementList() {
         title="Delete Knowledge Space"
         message={`Are you sure you want to delete "${deletingKnowledge?.name}"?`}
         warningMessage={
-          deletingKnowledge && getLinkedAgentCount(deletingKnowledge.id) > 0
-            ? `This knowledge space is linked to ${getLinkedAgentCount(deletingKnowledge.id)} agent(s).`
+          deletingKnowledge && linkedCount(deletingKnowledge.id) > 0
+            ? `This knowledge space is linked to ${linkedCount(deletingKnowledge.id)} agent(s).`
             : undefined
         }
         onConfirm={handleDelete}

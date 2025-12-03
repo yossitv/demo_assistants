@@ -8,12 +8,16 @@ import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { isValidAgentName } from '@/lib/utils/validation';
 
+interface CreateAgentFormProps {
+  onAgentCreated?: (agentId: string) => void;
+}
+
 /**
  * Multi-step form for creating an agent with knowledge base
  * Step 1: Knowledge base selection (existing or new)
  * Step 2: Agent configuration
  */
-const CreateAgentForm: React.FC = () => {
+const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onAgentCreated }) => {
   const router = useRouter();
   const { createAgent, knowledgeSpaces, loadKnowledgeSpaces } = useAgent();
 
@@ -145,6 +149,7 @@ const CreateAgentForm: React.FC = () => {
 
       // Store created agent ID
       setCreatedAgentId(agent.id);
+      onAgentCreated?.(agent.id);
     } catch (err) {
       // Handle error
       const errorMessage = err instanceof Error ? err.message : 'Failed to create agent';
