@@ -113,8 +113,7 @@ export function AgentManagementList({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Agents</h2>
+      {/* <div className="flex justify-end items-center mb-4">
         {(onRefresh || refetch) && (
           <button
             onClick={() => (onRefresh ? onRefresh() : refetch())}
@@ -124,7 +123,7 @@ export function AgentManagementList({
             Refresh
           </button>
         )}
-      </div>
+      </div> */}
 
       {toast && (
         <div className={`mb-4 px-4 py-3 rounded ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
@@ -165,14 +164,14 @@ export function AgentManagementList({
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {new Date(agent.createdAt).toLocaleDateString('ja-JP')}
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(agent.id);
                           setToast({ message: 'Agent ID copied', type: 'success' });
                         }}
-                        className="p-2 text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                        className="p-2 rounded text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors"
                         title="Copy Agent ID"
                         aria-label="Copy agent ID"
                       >
@@ -186,33 +185,27 @@ export function AgentManagementList({
                             router.push(`/agents/${agent.id}`);
                           }
                         }}
-                        className="p-2 text-green-700 bg-green-100 rounded hover:bg-green-200"
+                        className="p-2 rounded text-gray-500 hover:text-green-800 hover:bg-green-100 transition-colors"
                         title="Go to chat"
                         aria-label="Go to chat"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
+                        <span aria-hidden="true">💬</span>
                       </button>
                       <button
                         onClick={() => setEditingAgent(agent)}
-                        className="p-2 text-blue-700 bg-blue-100 rounded hover:bg-blue-200"
+                        className="p-2 rounded text-gray-500 hover:text-blue-700 hover:bg-blue-50"
                         title="Edit agent"
                         aria-label="Edit agent"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 11l3 3 8-8M4 20h4" />
-                        </svg>
+                        <span aria-hidden="true">✎</span>
                       </button>
                       <button
                         onClick={() => setDeletingAgent(agent)}
-                        className="p-2 text-red-700 bg-red-100 rounded hover:bg-red-200"
+                        className="p-2 rounded text-gray-500 hover:text-red-800 hover:bg-red-100 transition-colors"
                         title="Delete agent"
                         aria-label="Delete agent"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <span aria-hidden="true">🗑️</span>
                       </button>
                     </div>
                   </td>

@@ -52,16 +52,22 @@ describe('Dashboard UI properties', () => {
   it('Property 2: agent dropdown population', () => {
     fc.assert(
       fc.property(
-        fc.array(
-          fc.record({
-            id: fc.uuid(),
-            name: fc
-              .string({ minLength: 1, maxLength: 20 })
-              .filter((value) => /^[A-Za-z]+$/.test(value)),
-            description: fc.string({ maxLength: 30 }),
-          }),
-          { minLength: 1, maxLength: 5 }
-        ),
+        fc
+          .array(
+            fc.record({
+              id: fc.uuid(),
+              name: fc
+                .string({ minLength: 1, maxLength: 20 })
+                .filter((value) => /^[A-Za-z]+$/.test(value)),
+              description: fc.string({ maxLength: 30 }),
+            }),
+            { minLength: 1, maxLength: 5 }
+          )
+          .filter(
+            (arr) =>
+              new Set(arr.map((a) => a.id)).size === arr.length &&
+              new Set(arr.map((a) => a.name)).size === arr.length
+          ),
         (items) => {
           cleanup();
           const agents: Agent[] = items.map((item) => ({

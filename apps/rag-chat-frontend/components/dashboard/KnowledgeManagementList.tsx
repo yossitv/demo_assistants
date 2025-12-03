@@ -131,8 +131,7 @@ export function KnowledgeManagementList({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Knowledge Spaces</h2>
+      {/* <div className="flex justify-end items-center mb-4">
         {(onRefresh || refetch) && (
           <button
             onClick={() => (onRefresh ? onRefresh() : refetch())}
@@ -142,7 +141,7 @@ export function KnowledgeManagementList({
             Refresh
           </button>
         )}
-      </div>
+      </div> */}
 
       {toast && (
         <div className={`mb-4 px-4 py-3 rounded ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
@@ -191,15 +190,19 @@ export function KnowledgeManagementList({
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => handleViewChunks(ks.id)}
-                        className="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
+                        className="p-2 rounded text-gray-500 hover:text-blue-800 hover:bg-blue-100 transition-colors"
+                        title="View data"
+                        aria-label="View data"
                       >
-                        View Data
+                        <span aria-hidden="true">💬</span>
                       </button>
                       <button
                         onClick={() => setDeletingKnowledge(ks)}
-                        className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                        className="p-2 rounded text-gray-500 hover:text-red-800 hover:bg-red-100 transition-colors"
+                        title="Delete knowledge space"
+                        aria-label="Delete knowledge space"
                       >
-                        Delete
+                        <span aria-hidden="true">🗑️</span>
                       </button>
                     </div>
                   </td>

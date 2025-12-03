@@ -14,7 +14,7 @@ import { Agent } from '@/types';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<SidebarTab>('chat');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 
   const agentManagement = useAgentManagement();

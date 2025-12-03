@@ -57,23 +57,18 @@ const tabs: Array<{ id: SidebarTab; label: string; description: string; icon: Re
 export function Sidebar({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) {
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/10 backdrop-blur-sm md:hidden"
-          aria-hidden="true"
-          onClick={onClose}
-        />
-      )}
       <aside
-        className={`fixed md:static z-40 inset-y-0 left-0 w-72 bg-white border-r border-gray-200 shadow-sm transition-transform duration-200 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        className={`fixed z-40 top-14 bottom-0 left-0 w-72 bg-white border-r border-gray-200 shadow-sm transition-transform duration-200 ${
+          isOpen ? 'translate-x-0 md:translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
         aria-label="Sidebar navigation"
       >
         <div className="h-full flex flex-col">
           <div className="px-4 py-5 border-b border-gray-200">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Dashboard</p>
-            <p className="text-lg font-semibold text-gray-900">Controls</p>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-500">assistants</p>
+              <p className="text-lg font-semibold text-gray-900">Controls</p>
+            </div>
           </div>
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2" aria-label="Dashboard sections">
             {tabs.map((tab) => {

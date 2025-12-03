@@ -9,7 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { isValidAgentName } from '@/lib/utils/validation';
 
 interface CreateAgentFormProps {
-  onAgentCreated?: (agentId: string) => void;
+  onCreated?: (agentId: string) => void;
 }
 
 /**
@@ -17,14 +17,15 @@ interface CreateAgentFormProps {
  * Step 1: Knowledge base selection (existing or new)
  * Step 2: Agent configuration
  */
-const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onAgentCreated }) => {
+const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onCreated }) => {
   const router = useRouter();
   const { createAgent, knowledgeSpaces, loadKnowledgeSpaces } = useAgent();
 
   // Form state
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [knowledgeSpaceIds, setKnowledgeSpaceIds] = useState<string[]>([]);
-  const [useExisting, setUseExisting] = useState<boolean>(false);
+  // Default to using existing knowledge spaces (can switch to create new)
+  const [useExisting, setUseExisting] = useState<boolean>(true);
 
   // Agent configuration state
   const [agentName, setAgentName] = useState('');
@@ -149,7 +150,7 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onAgentCreated }) => 
 
       // Store created agent ID
       setCreatedAgentId(agent.id);
-      onAgentCreated?.(agent.id);
+      onCreated?.(agent.id);
     } catch (err) {
       // Handle error
       const errorMessage = err instanceof Error ? err.message : 'Failed to create agent';
