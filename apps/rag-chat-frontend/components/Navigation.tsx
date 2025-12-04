@@ -117,7 +117,7 @@ export function Navigation() {
 
   return (
     <nav
-      className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
+      className="bg-white border-b border-gray-200"
       aria-label="Primary navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,7 +126,7 @@ export function Navigation() {
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="inline-flex items-center px-2 text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors min-h-[44px] focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md"
+              className="inline-flex items-center px-2 text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors min-h-[44px] focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-md"
             >
               RAG Chat Assistant
             </Link>
@@ -140,8 +140,8 @@ export function Navigation() {
                 href={link.href}
                 className={`inline-flex items-center px-3 py-2 min-h-[44px] text-sm font-medium rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                   isActiveLink(link.href)
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
                 }`}
                 aria-current={isActiveLink(link.href) ? 'page' : undefined}
               >
@@ -156,7 +156,7 @@ export function Navigation() {
               ref={menuButtonRef}
               type="button"
               onClick={toggleMobileMenu}
-              className="inline-flex items-center justify-center p-3 min-w-[48px] min-h-[48px] rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 touch-manipulation"
+              className="inline-flex items-center justify-center p-3 min-w-[48px] min-h-[48px] rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 touch-manipulation"
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
               aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -218,8 +218,8 @@ export function Navigation() {
                 onClick={closeMobileMenu}
                 className={`block px-4 py-3 min-h-[48px] rounded-md text-base font-medium transition-colors touch-manipulation ${
                   isActiveLink(link.href)
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50 active:bg-gray-100'
                 }`}
                 aria-current={isActiveLink(link.href) ? 'page' : undefined}
               >

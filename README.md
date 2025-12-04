@@ -26,6 +26,7 @@ npm run test
 - **技術**: React, TypeScript, Tailwind CSS
 - **機能**: 直感的な注文UI、多言語対応
 - **詳細**: [.kiro/steering/casher_1overview.md](.kiro/steering/casher_1overview.md)
+- **注意 (Tavus/Daily 利用時)**: ブラウザやネットワークのコンテンツブロッカーが `*.daily.co` を遮断していると Tavus/Daily iframe の接続が失敗します。動かない場合はコンテンツブロッカーを無効化するか、`*.daily.co` を許可してください。
 
 ## 開発環境
 

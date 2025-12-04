@@ -5,13 +5,29 @@ import { useRouter } from 'next/navigation';
 import { useAgentManagement } from '@/lib/hooks/useAgentManagement';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { AgentEditModal } from './AgentEditModal';
-import { Agent, KnowledgeSpace } from '@/types';
+import { Agent, AgentUpdateRequest, KnowledgeSpace } from '@/types';
 
 interface AgentManagementListProps {
   knowledgeSpaces: KnowledgeSpace[];
+  agents?: Agent[];
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
+  onUpdateAgent?: (id: string, data: AgentUpdateRequest) => Promise<void>;
+  onDeleteAgent?: (id: string) => Promise<void>;
+  onGoToChat?: (agent: Agent) => void;
 }
 
-export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProps) {
+export function AgentManagementList({
+  knowledgeSpaces,
+  agents: injectedAgents,
+  loading: injectedLoading,
+  error: injectedError,
+  onRefresh,
+  onUpdateAgent,
+  onDeleteAgent,
+  onGoToChat,
+}: AgentManagementListProps) {
   const router = useRouter();
   const { agents, loading, error, refetch, updateAgent, deleteAgent } = useAgentManagement();
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
@@ -20,8 +36,10 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!injectedAgents) {
+      refetch();
+    }
+  }, [injectedAgents, refetch]);
 
   useEffect(() => {
     if (toast) {
@@ -35,7 +53,11 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
 
     setDeleteLoading(true);
     try {
-      await deleteAgent(deletingAgent.id);
+      if (onDeleteAgent) {
+        await onDeleteAgent(deletingAgent.id);
+      } else {
+        await deleteAgent(deletingAgent.id);
+      }
       setToast({ message: 'Agent deleted (local only)', type: 'success' });
       setDeletingAgent(null);
     } catch (err) {
@@ -46,11 +68,15 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
     }
   };
 
-  const handleUpdate = async (data: any) => {
+  const handleUpdate = async (data: AgentUpdateRequest) => {
     if (!editingAgent) return;
 
     try {
-      await updateAgent(editingAgent.id, data);
+      if (onUpdateAgent) {
+        await onUpdateAgent(editingAgent.id, data);
+      } else {
+        await updateAgent(editingAgent.id, data);
+      }
       setToast({ message: 'Agent updated', type: 'success' });
       setEditingAgent(null);
     } catch (err) {
@@ -69,30 +95,35 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
     return knowledgeSpaces.find(ks => ks.id === id)?.name || id;
   };
 
-  if (loading && agents.length === 0) {
+  const displayedAgents = injectedAgents ?? agents;
+  const isLoading = injectedLoading ?? loading;
+  const displayError = injectedError ?? error;
+
+  if (isLoading && displayedAgents.length === 0) {
     return <div className="text-center py-8">Loading...</div>;
   }
 
-  if (error) {
+  if (displayError) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-        Error: {error}
+        Error: {displayError}
       </div>
     );
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Agents</h2>
-        <button
-          onClick={refetch}
-          disabled={loading}
-          className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
-        >
-          Refresh
-        </button>
-      </div>
+      {/* <div className="flex justify-end items-center mb-4">
+        {(onRefresh || refetch) && (
+          <button
+            onClick={() => (onRefresh ? onRefresh() : refetch())}
+            disabled={isLoading}
+            className="px-4 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+          >
+            Refresh
+          </button>
+        )}
+      </div> */}
 
       {toast && (
         <div className={`mb-4 px-4 py-3 rounded ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
@@ -100,7 +131,7 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
         </div>
       )}
 
-      {agents.length === 0 ? (
+      {displayedAgents.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           No agents found
         </div>
@@ -117,7 +148,7 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {agents.map((agent, idx) => {
+              {displayedAgents.map((agent, idx) => {
                 const rowKey = agent.id || `${agent.name}-${agent.createdAt}-${idx}`;
                 return (
                 <tr key={rowKey} className="hover:bg-gray-50">
@@ -133,35 +164,50 @@ export function AgentManagementList({ knowledgeSpaces }: AgentManagementListProp
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {new Date(agent.createdAt).toLocaleDateString('ja-JP')}
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(agent.id);
-                        setToast({ message: 'Agent ID copied', type: 'success' });
-                      }}
-                      className="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-                      title="Copy Agent ID"
-                    >
-                      ID
-                    </button>
-                    <button
-                      onClick={() => router.push(`/agents/${agent.id}`)}
-                      className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
-                    >
-                      Chat
-                    </button>
-                    <button
-                      onClick={() => setEditingAgent(agent)}
-                      className="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => setDeletingAgent(agent)}
-                      className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(agent.id);
+                          setToast({ message: 'Agent ID copied', type: 'success' });
+                        }}
+                        className="p-2 rounded text-gray-500 hover:text-gray-900 hover:bg-gray-200 transition-colors"
+                        title="Copy Agent ID"
+                        aria-label="Copy agent ID"
+                      >
+                        <span aria-hidden="true">#</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (onGoToChat) {
+                            onGoToChat(agent);
+                          } else {
+                            router.push(`/agents/${agent.id}`);
+                          }
+                        }}
+                        className="p-2 rounded text-gray-500 hover:text-green-800 hover:bg-green-100 transition-colors"
+                        title="Go to chat"
+                        aria-label="Go to chat"
+                      >
+                        <span aria-hidden="true">💬</span>
+                      </button>
+                      <button
+                        onClick={() => setEditingAgent(agent)}
+                        className="p-2 rounded text-gray-500 hover:text-blue-700 hover:bg-blue-50"
+                        title="Edit agent"
+                        aria-label="Edit agent"
+                      >
+                        <span aria-hidden="true">✎</span>
+                      </button>
+                      <button
+                        onClick={() => setDeletingAgent(agent)}
+                        className="p-2 rounded text-gray-500 hover:text-red-800 hover:bg-red-100 transition-colors"
+                        title="Delete agent"
+                        aria-label="Delete agent"
+                      >
+                        <span aria-hidden="true">🗑️</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )})}

@@ -63,7 +63,7 @@ export default function KnowledgePage() {
 
   return (
     <main
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20"
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50"
       role="main"
       aria-busy={loading}
     >
@@ -72,10 +72,10 @@ export default function KnowledgePage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
                 Knowledge Spaces
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
+              <p className="text-lg text-gray-600">
                 Manage your knowledge bases and information sources
               </p>
             </div>
@@ -117,12 +117,12 @@ export default function KnowledgePage() {
 
         {/* Info Section - Only show when not loading and no error */}
         {!loading && !error && (
-          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-12 pt-8 border-t border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                    className="w-6 h-6 text-blue-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -136,18 +136,18 @@ export default function KnowledgePage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Web Sources
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-200">
+                <p className="text-sm text-gray-700">
                   Import knowledge from websites and documentation
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-6 h-6 text-purple-600 dark:text-purple-400"
+                    className="w-6 h-6 text-purple-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -161,18 +161,18 @@ export default function KnowledgePage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Organized Storage
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-200">
+                <p className="text-sm text-gray-700">
                   Keep your knowledge organized and easily accessible
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-6 h-6 text-green-600 dark:text-green-400"
+                    className="w-6 h-6 text-green-600"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -186,10 +186,10 @@ export default function KnowledgePage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   AI-Powered
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-200">
+                <p className="text-sm text-gray-700">
                   Power your AI agents with domain-specific knowledge
                 </p>
               </div>

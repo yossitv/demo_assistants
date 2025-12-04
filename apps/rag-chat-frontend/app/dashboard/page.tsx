@@ -1,66 +1,102 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { AgentManagementList } from '@/components/dashboard/AgentManagementList';
-import { KnowledgeManagementList } from '@/components/dashboard/KnowledgeManagementList';
-import { apiClient } from '@/lib/api/client';
-import { KnowledgeSpace } from '@/types';
+import { DashboardLayout } from './components/DashboardLayout';
+import { SidebarTab } from './components/Sidebar';
+import { ChatPanel } from './components/ChatPanel';
+import { VectorKnowledgePanel } from './components/VectorKnowledgePanel';
+import { AgentsPanel } from './components/AgentsPanel';
+import { APIKeysPanel } from './components/APIKeysPanel';
+import { useAgentManagement } from '@/lib/hooks/useAgentManagement';
+import { useKnowledgeManagement } from '@/lib/hooks/useKnowledgeManagement';
+import { useAgent } from '@/lib/context/KnowledgeContext';
+import { Agent } from '@/types';
 
 export default function DashboardPage() {
-  const [knowledgeSpaces, setKnowledgeSpaces] = useState<KnowledgeSpace[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<SidebarTab>('chat');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+
+  const agentManagement = useAgentManagement();
+  const knowledgeManagement = useKnowledgeManagement();
+  const { selectAgent, refreshAgents } = useAgent();
 
   useEffect(() => {
-    const fetchKnowledgeSpaces = async () => {
-      try {
-        const response = await apiClient.listKnowledgeSpaces();
-        setKnowledgeSpaces(response.knowledgeSpaces);
-      } catch (err) {
-        console.error('Failed to fetch knowledge spaces:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    agentManagement.refetch();
+    knowledgeManagement.refetch();
+  }, [agentManagement.refetch, knowledgeManagement.refetch]);
 
-    fetchKnowledgeSpaces();
-  }, []);
+  useEffect(() => {
+    if (!selectedAgentId && agentManagement.agents.length > 0) {
+      setSelectedAgentId(agentManagement.agents[0].id);
+    }
+  }, [agentManagement.agents, selectedAgentId]);
+
+  const handleAgentSelection = (agentId: string | null) => {
+    setSelectedAgentId(agentId);
+    const agent = agentManagement.agents.find((a) => a.id === agentId);
+    if (agent) {
+      selectAgent(agent);
+    }
+  };
+
+  const handleGoToChat = (agent: Agent) => {
+    handleAgentSelection(agent.id);
+    setActiveTab('chat');
+    setSidebarOpen(false);
+  };
+
+  const handleAgentCreated = async (newAgentId?: string) => {
+    await agentManagement.refetch();
+    refreshAgents();
+    if (newAgentId) {
+      setSelectedAgentId(newAgentId);
+      setActiveTab('chat');
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'chat':
+        return (
+          <ChatPanel
+            agents={agentManagement.agents}
+            selectedAgentId={selectedAgentId}
+            onAgentChange={handleAgentSelection}
+            onRequestCreateAgent={() => setActiveTab('agents')}
+          />
+        );
+      case 'vector-knowledge':
+        return <VectorKnowledgePanel />;
+      case 'agents':
+        return (
+          <AgentsPanel
+            knowledgeSpaces={knowledgeManagement.knowledgeSpaces}
+            agents={agentManagement.agents}
+            loading={agentManagement.loading}
+            error={agentManagement.error}
+            onRefreshAgents={agentManagement.refetch}
+            onGoToChat={handleGoToChat}
+            onAgentCreated={handleAgentCreated}
+            onUpdateAgent={agentManagement.updateAgent}
+            onDeleteAgent={agentManagement.deleteAgent}
+          />
+        );
+      case 'api-keys':
+        return <APIKeysPanel agents={agentManagement.agents} />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Dashboard</h1>
-          <div className="flex gap-4">
-            <Link
-              href="/agents/create"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              + Create Agent
-            </Link>
-            <Link
-              href="/knowledge/create"
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              + Create Knowledge Space
-            </Link>
-          </div>
-        </div>
-
-        <div className="space-y-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            {loading ? (
-              <div className="text-center py-8">読み込み中...</div>
-            ) : (
-              <AgentManagementList knowledgeSpaces={knowledgeSpaces} />
-            )}
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <KnowledgeManagementList />
-          </div>
-        </div>
-      </div>
-    </div>
+    <DashboardLayout
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      sidebarOpen={sidebarOpen}
+      onToggleSidebar={setSidebarOpen}
+    >
+      {renderContent()}
+    </DashboardLayout>
   );
 }
