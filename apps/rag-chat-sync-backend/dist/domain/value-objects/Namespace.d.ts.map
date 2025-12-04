@@ -1,1 +1,0 @@
-{"version":3,"file":"Namespace.d.ts","sourceRoot":"","sources":["../../../src/domain/value-objects/Namespace.ts"],"names":[],"mappings":"AAAA,qBAAa,SAAS;aAIF,QAAQ,EAAE,MAAM;aAChB,gBAAgB,EAAE,MAAM;aACxB,OAAO,EAAE,MAAM;IALjC,OAAO,CAAC,QAAQ,CAAC,KAAK,CAAS;gBAGb,QAAQ,EAAE,MAAM,EAChB,gBAAgB,EAAE,MAAM,EACxB,OAAO,EAAE,MAAM;IAKjC,QAAQ,IAAI,MAAM;CAGnB"}
