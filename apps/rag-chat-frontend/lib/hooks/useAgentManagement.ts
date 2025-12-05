@@ -2,8 +2,18 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { apiClient } from '../api/client';
+import { Agent as ApiAgent } from '../api/types';
 import { Agent, AgentUpdateRequest } from '@/types';
 import { getAgents, saveAgent, removeAgent } from '../utils/storage';
+
+const mapApiAgentToAgent = (apiAgent: ApiAgent, fallbackKnowledgeSpaceId?: string): Agent => ({
+  id: apiAgent.id,
+  name: apiAgent.name,
+  description: apiAgent.description,
+  strictRAG: apiAgent.strictRAG,
+  knowledgeSpaceId: apiAgent.knowledgeSpaceId || fallbackKnowledgeSpaceId || '',
+  createdAt: apiAgent.createdAt || new Date().toISOString(),
+});
 
 export function useAgentManagement() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -32,7 +42,7 @@ export function useAgentManagement() {
     setError(null);
     try {
       const response = await apiClient.updateAgent(id, data);
-      saveAgent(response.agent);
+      saveAgent(mapApiAgentToAgent(response.agent, data.knowledgeSpaceIds[0]));
       await refetch();
     } catch (err) {
       // If API returns 403 (not implemented), update localStorage only

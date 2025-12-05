@@ -71,7 +71,7 @@ export default function HomePage() {
           <p className={styles.subtitle}>{t("簡単3ステップで、すぐにお届け", "Quick & easy in just 3 steps")}</p>
           <button
             className={`${styles.cta} ${isPressed ? styles.pressed : ""}`}
-            onClick={() => router.push("/casher_1/order")}
+            onClick={() => router.push("/cashier/order")}
             onMouseDown={() => setIsPressed(true)}
             onMouseUp={() => setTimeout(() => setIsPressed(false), 150)}
             onMouseLeave={() => setIsPressed(false)}

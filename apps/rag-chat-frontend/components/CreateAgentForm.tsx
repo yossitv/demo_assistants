@@ -182,7 +182,7 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onCreated }) => {
    */
   const handleGoBack = () => {
     setCurrentStep(1);
-    setKnowledgeSpaceId(null);
+    setKnowledgeSpaceIds([]);
     setAgentError(null);
   };
 

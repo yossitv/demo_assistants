@@ -24,7 +24,7 @@ export default function PayPage() {
         console.error("Failed to end conversation:", error);
       }
     }
-    router.push("/casher_1/thanks");
+    router.push("/cashier/thanks");
   };
 
   return (
@@ -99,7 +99,7 @@ export default function PayPage() {
             <button className={styles.buttonPrimary} onClick={handlePaid}>
               {t("支払いを確定", "Complete payment")}
             </button>
-            <button className={styles.buttonSecondary} onClick={() => router.push("/casher_1/order")}>
+            <button className={styles.buttonSecondary} onClick={() => router.push("/cashier/order")}>
               {t("注文に戻る", "Back to order")}
             </button>
           </div>
