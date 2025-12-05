@@ -28,7 +28,7 @@ export default function OrderPage() {
       }
     }
     clearCart();
-    router.push("/casher_1/home");
+    router.push("/cashier/home");
   };
 
   return (
@@ -68,7 +68,7 @@ export default function OrderPage() {
           <AgentMeeting />
           <button
             className={styles.buttonPrimary}
-            onClick={() => router.push("/casher_1/pay")}
+            onClick={() => router.push("/cashier/pay")}
             disabled={items.length === 0}
           >
             {t("支払いへ進む", "Proceed to payment")}

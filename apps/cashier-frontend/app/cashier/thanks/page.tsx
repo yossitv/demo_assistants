@@ -14,7 +14,7 @@ export default function ThanksPage() {
   useEffect(() => {
     clearCart();
     const timer = setTimeout(() => {
-      router.push("/casher_1/home");
+      router.push("/cashier/home");
     }, 3000);
     return () => clearTimeout(timer);
   }, [clearCart, router]);

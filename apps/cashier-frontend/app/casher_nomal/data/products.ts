@@ -1,1 +1,1 @@
-export { PRODUCTS } from "../../casher_1/data/products";
+export { PRODUCTS } from "../../cashier/data/products";

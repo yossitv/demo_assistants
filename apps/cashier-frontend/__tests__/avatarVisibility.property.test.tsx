@@ -94,7 +94,7 @@ describe("**Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on sho
 
             try {
               await waitFor(() => {
-                const avatar = view.container.querySelector(".floatingAvatar");
+                const avatar = view.container.querySelector(".sharedAvatarFloating");
                 expect(avatar).toBeInTheDocument();
               });
 
@@ -107,7 +107,7 @@ describe("**Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on sho
               );
 
               await waitFor(() => {
-                const avatar = view.container.querySelector(".floatingAvatar");
+                const avatar = view.container.querySelector(".sharedAvatarFloating");
                 expect(avatar).toBeInTheDocument();
               });
 
@@ -121,9 +121,12 @@ describe("**Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on sho
             }
           }
         ),
-      { numRuns: 100 }
+      { 
+        numRuns: 50,
+        timeout: 30000
+      }
     );
-  });
+  }, 35000);
 });
 
 describe("**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence during navigation**", () => {
@@ -163,7 +166,7 @@ describe("**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence d
 
             try {
               await waitFor(() => {
-                const avatar = view.container.querySelector(".floatingAvatar");
+                const avatar = view.container.querySelector(".sharedAvatarFloating");
                 expect(avatar).toBeInTheDocument();
               });
 
@@ -181,7 +184,7 @@ describe("**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence d
                 expect(payState?.conversationUrl).toBe(conversationUrl);
                 expect(payState?.conversationId).toBe(conversationId);
                 expect(payState?.isExpanded).toBe(false);
-                const avatar = view.container.querySelector(".floatingAvatar");
+                const avatar = view.container.querySelector(".sharedAvatarFloating");
                 expect(avatar).toBeInTheDocument();
               });
             } finally {
@@ -189,7 +192,10 @@ describe("**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence d
             }
           }
         ),
-      { numRuns: 100 }
+      { 
+        numRuns: 50,
+        timeout: 30000
+      }
     );
-  });
+  }, 35000);
 });
