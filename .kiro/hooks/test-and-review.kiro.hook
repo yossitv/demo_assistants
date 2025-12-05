@@ -1,13 +1,15 @@
 {
   "enabled": true,
   "name": "Test & Review",
-  "description": "Automatically runs npm tests when TypeScript files change, then analyzes test results and provides code review feedback including failure explanations and quality suggestions",
+  "description": "Runs npm tests with JSON output, saves results to timestamped log file in .kiro/temp/log/, then asks AI agent to analyze test results and generate a review in .kiro/temp/review/",
   "version": "1",
   "when": {
     "type": "userTriggered"
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Find the project root by locating package.json (excluding node_modules), navigate to that directory, and run 'npm run test -- --json > test_results.json'. After the tests complete, analyze test_results.json along with recently changed TypeScript files in src/**/*.ts. If there are test failures, explain why they failed and provide fixed code suggestions. If all tests pass, provide a brief code review focusing on code quality, best practices, and potential improvements."
-  }
+    "prompt": "# Test & Review Hook\n\nPlease execute the following steps:\n\n## Step 1: Ask User\nAsk the user which app to test:\n- cashier-frontend\n- rag-chat-frontend  \n- rag-chat-stream-backend\n\n## Step 2: Setup\nCreate directories if they don't exist:\n```bash\nmkdir -p .kiro/temp/log\nmkdir -p .kiro/temp/review\n```\n\n## Step 3: Run Tests\nGenerate timestamp and run tests:\n```bash\nAPP_NAME=\"{user-selected-app}\"\nNOW=$(date +\"%Y%m%d_%H%M%S\")\ncd apps/${APP_NAME}\nnpm run test -- --json > ../../.kiro/temp/log/test_results_${APP_NAME}_${NOW}.json 2>&1 || true\n```\n\n## Step 4: Read Results\nRead the generated JSON file from `.kiro/temp/log/test_results_{app}_{timestamp}.json`\n\n## Step 5: Analyze\nAnalyze the test results:\n- **If there are failures**: Explain why tests failed and provide code fix suggestions\n- **If all tests pass**: Provide a brief code quality review focusing on the tested components\n\n## Step 6: Save Review\nCreate a markdown file at `.kiro/temp/review/{app}_{timestamp}.md` with these sections:\n\n### Summary\n- Total tests run\n- Passed/Failed count\n- Overall status\n\n### Failed Tests (if any)\n- Test name\n- Error message\n- Root cause analysis\n- Suggested fix\n\n### Recommendations\n- Code improvements\n- Test coverage suggestions\n- Best practices\n\n### Code Quality Notes\n- Strengths observed\n- Areas for improvement\n- Architecture feedback"
+  },
+  "workspaceFolderName": "yoshi_demo_assistants",
+  "shortName": "test-and-review"
 }

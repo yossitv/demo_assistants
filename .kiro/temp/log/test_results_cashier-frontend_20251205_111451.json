@@ -1,0 +1,1047 @@
+
+> cashier-frontend@0.1.0 test
+> jest --json
+
+PASS __tests__/avatarState.property.test.tsx
+  ● Console
+
+    console.info
+      [Tavus] connected r$arguments { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected nD { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Q { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #}MQJ%%AK% { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected xB { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 46mNy # { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected YY] { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected  ICc=p:`p$_ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected !+$ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected {Koxv{K { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected gXa { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected T2GzY5!oz& { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ineG-)8#\mhy { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected "P!xKO { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected `TIhWD%T&"M { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected key { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected <m[fu { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected __defineGett { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ?jKGa_g { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected __lo { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected +k|VtI&q- { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected  &:B @&i { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected U4.u { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected hWP)I { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected *J { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected $ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #kA?w'S :> { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 19hT*[MMTV%D { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected %W` { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected di'J3;P;*^ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ^9]1 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 9\yBe&IZ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected call { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ~X<. { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected &Uz&@4X { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected DXn'zi]Jx0 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected "2.7 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #uK { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected NM`F+WfMuw { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 4 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected $0L0|']\vDw { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected &P< { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected dn]&&!U { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ,(` { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected `~3wD&7 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected F6R3~?Ugszi { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected __ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected dgh9'5ibyLw  { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected O { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 2%B( { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected }}@yMA$* { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected GPXk$oWeEu) { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected w { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ]C@{'@I\y { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected NR(1E@B`Wtm { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 9)d>j[jZyz { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected =n#nQY8> { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 5toStrin { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected @ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected I78ZBw@XrX} { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected C2?L& { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected <O"+W%) { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected )MBZ|vh { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected \2#>6X { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected }h { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected pWP { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ]Tw[WAz~A { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 74_}bi8w$ g { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected vR  { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 4|#u#gth { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected e.R^K5z { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected w { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected tDQRv}f! { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected (~ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected "arg { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ^0(;`,g { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected >@w4| { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Y { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected p8po,;7_k<V { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected E5%c7 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected l 2 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Lcaller  { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected key { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected :th:*t { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ~v { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected qpGmV# { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected .[ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected +^F/7Rx{ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected W6^# { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected b { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #5b\P*h[FD7 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected OJ\HwNnt8 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected {Mz9!\3n) { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected I> { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Am=. { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected *sQ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected t { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Iig^1 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected `Ja]#]JX]#m2 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 4W]vHqhcU$ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected }^|HI?=$7c?> { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ?2 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected name { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected f OZd=V { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ^ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #y$t { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ~ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ref { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 1?0 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected T { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 9 [<.| { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected H_&; { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Q,5V Pk { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 7JQ$h~zRm9 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected q>dXCg { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected e { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected .<}#ZXU7 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected $ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected t-[<Su:&jSA { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Ex?[;`-' { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected '"~ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected { { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected dj4y { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected -n|B { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected jv)ro$!7m { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected YbJcR1VON)1 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected xk? { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected (IYn#8~ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected wCtk(4YgV0CJ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected i.eX<ZTT  { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ~W { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected wm9abind { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected T { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected En3Z;X&;Yk { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected F&JD)1, { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected mm { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected }p~Z} { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected UWNUk]S*i[?m { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected wS.& { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 9l { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected &%| { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected o"[3"^M%J { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected FROuJ]]Kb{e { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 0=9U@<AvL { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected PRej&j${x8 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected [lJV+X#Re { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected x { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected wn:c { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ##3  { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Vh`\7 U~[t { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 0"} { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected #83 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Ao$_zoF#6-on { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected E { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected oMFA { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected V, { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected  ac { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected __lookupSe { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected uJ=D0NQf\(ba { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected =`#%:j { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected n"=W`yT:w]+c { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 8,f,X-P'Oc4 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected %#X" { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected :pw[{w { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected .zTI { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ` { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected sP,quq&W { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected t"p[G5 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ~93 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ;43`IN]#m { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ]f { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 2[9Ini { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected } { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected AC,gv\*9t { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected V!%, { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ' { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected # { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected %[wd/8.5OTYj { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected DPhZx { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected f,#q4 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 6|% { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected k{3V~p= { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected V { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected \#}L{&%| { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected $ { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected =?tm]u { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected : { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 4~lIcHkS { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected *JjK*ZYs{MT { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected + { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 30)=.'^(=l { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected XTg2M_ CwXD { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected L-4W {/P { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected unma#<PlU"hL { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected hI69NxEpI { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ,~/Ls4Hw2 { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ve00gCVT>/n { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected Bhs/-VTR;n { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected 19_i { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+    console.info
+      [Tavus] connected ,2ZX7X \A { mode: 'default' }
+
+      at attemptConnect (app/providers/AvatarStateProvider.tsx:157:21)
+
+PASS __tests__/languageSelection.property.test.tsx
+FAIL __tests__/avatarVisibility.property.test.tsx (10.524 s)
+  ● **Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on shopping screens** › Property: Floating avatar stays visible on order and pay screens while connected
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      64 |   });
+      65 |
+    > 66 |   it("Property: Floating avatar stays visible on order and pay screens while connected", async () => {
+         |   ^
+      67 |     await fc.assert(
+      68 |         fc.asyncProperty(
+      69 |           fc.webUrl({ validSchemes: ["http", "https"] }),
+
+      at __tests__/avatarVisibility.property.test.tsx:66:3
+      at Object.<anonymous> (__tests__/avatarVisibility.property.test.tsx:60:1)
+
+  ● **Feature: casher-3-avatar-kiosk, Property 4: Connection persistence during navigation** › Property: avatar connection and display state persists when navigating from order to pay
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      133 |   });
+      134 |
+    > 135 |   it("Property: avatar connection and display state persists when navigating from order to pay", async () => {
+          |   ^
+      136 |     await fc.assert(
+      137 |         fc.asyncProperty(
+      138 |           fc.webUrl({ validSchemes: ["http", "https"] }),
+
+      at __tests__/avatarVisibility.property.test.tsx:135:3
+      at Object.<anonymous> (__tests__/avatarVisibility.property.test.tsx:129:1)
+
+Test Suites: 1 failed, 2 passed, 3 total
+Tests:       2 failed, 3 passed, 5 total
+Snapshots:   0 total
+Time:        11.176 s
+Ran all test suites.
+{"numFailedTestSuites":1,"numFailedTests":2,"numPassedTestSuites":2,"numPassedTests":3,"numPendingTestSuites":0,"numPendingTests":0,"numRuntimeErrorTestSuites":0,"numTodoTests":0,"numTotalTestSuites":3,"numTotalTests":5,"openHandles":[],"snapshot":{"added":0,"didUpdate":false,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0},"startTime":1764900892498,"success":false,"testResults":[{"assertionResults":[{"ancestorTitles":["**Feature: casher-3-avatar-kiosk, Property 5: Connect function sets isConnected on success**"],"duration":1166,"failureDetails":[],"failureMessages":[],"fullName":"**Feature: casher-3-avatar-kiosk, Property 5: Connect function sets isConnected on success** Property: connect() marks the avatar as connected and stores conversation data on success","invocations":1,"location":null,"numPassingAsserts":600,"retryReasons":[],"status":"passed","title":"Property: connect() marks the avatar as connected and stores conversation data on success"},{"ancestorTitles":["**Feature: casher-3-avatar-kiosk, Property 2: Connection persistence during collapse**"],"duration":583,"failureDetails":[],"failureMessages":[],"fullName":"**Feature: casher-3-avatar-kiosk, Property 2: Connection persistence during collapse** Property: collapse keeps the Tavus connection active","invocations":1,"location":null,"numPassingAsserts":600,"retryReasons":[],"status":"passed","title":"Property: collapse keeps the Tavus connection active"}],"endTime":1764900895332,"message":"","name":"/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarState.property.test.tsx","startTime":1764900893115,"status":"passed","summary":""},{"assertionResults":[{"ancestorTitles":["**Feature: casher-3-avatar-kiosk, Property 1: Language selection updates all translatable text**"],"duration":4290,"failureDetails":[],"failureMessages":[],"fullName":"**Feature: casher-3-avatar-kiosk, Property 1: Language selection updates all translatable text** Property: every language selection updates all visible translatable text on home screen","invocations":1,"location":null,"numPassingAsserts":1026,"retryReasons":[],"status":"passed","title":"Property: every language selection updates all visible translatable text on home screen"}],"endTime":1764900897892,"message":"","name":"/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/languageSelection.property.test.tsx","startTime":1764900893115,"status":"passed","summary":""},{"assertionResults":[{"ancestorTitles":["**Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on shopping screens**"],"duration":5008,"failureDetails":[{"message":"thrown: \"Exceeded timeout of 5000 ms for a test.\nAdd a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\""}],"failureMessages":["Error: thrown: \"Exceeded timeout of 5000 ms for a test.\nAdd a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n    at /home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarVisibility.property.test.tsx:66:3\n    at _dispatchDescribe (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/index.js:91:26)\n    at describe (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/index.js:55:5)\n    at Object.<anonymous> (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarVisibility.property.test.tsx:60:1)\n    at Runtime._execModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:1439:24)\n    at Runtime._loadModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:1022:12)\n    at Runtime.requireModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:882:12)\n    at jestAdapter (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:77:13)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at runTestInternal (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/runTest.js:444:34)\n    at Object.worker (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/testWorker.js:106:12)"],"fullName":"**Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on shopping screens** Property: Floating avatar stays visible on order and pay screens while connected","invocations":1,"location":null,"numPassingAsserts":0,"retryReasons":[],"status":"failed","title":"Property: Floating avatar stays visible on order and pay screens while connected"},{"ancestorTitles":["**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence during navigation**"],"duration":5004,"failureDetails":[{"message":"thrown: \"Exceeded timeout of 5000 ms for a test.\nAdd a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\""}],"failureMessages":["Error: thrown: \"Exceeded timeout of 5000 ms for a test.\nAdd a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n    at /home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarVisibility.property.test.tsx:135:3\n    at _dispatchDescribe (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/index.js:91:26)\n    at describe (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/index.js:55:5)\n    at Object.<anonymous> (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarVisibility.property.test.tsx:129:1)\n    at Runtime._execModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:1439:24)\n    at Runtime._loadModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:1022:12)\n    at Runtime.requireModule (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runtime/build/index.js:882:12)\n    at jestAdapter (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:77:13)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at runTestInternal (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/runTest.js:444:34)\n    at Object.worker (/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/node_modules/jest-runner/build/testWorker.js:106:12)"],"fullName":"**Feature: casher-3-avatar-kiosk, Property 4: Connection persistence during navigation** Property: avatar connection and display state persists when navigating from order to pay","invocations":1,"location":null,"numPassingAsserts":0,"retryReasons":[],"status":"failed","title":"Property: avatar connection and display state persists when navigating from order to pay"}],"endTime":1764900903639,"message":"  ● **Feature: casher-3-avatar-kiosk, Property 3: Avatar visibility on shopping screens** › Property: Floating avatar stays visible on order and pay screens while connected\n\n    thrown: \"Exceeded timeout of 5000 ms for a test.\n    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n\n      64 |   });\n      65 |\n    > 66 |   it(\"Property: Floating avatar stays visible on order and pay screens while connected\", async () => {\n         |   ^\n      67 |     await fc.assert(\n      68 |         fc.asyncProperty(\n      69 |           fc.webUrl({ validSchemes: [\"http\", \"https\"] }),\n\n      at __tests__/avatarVisibility.property.test.tsx:66:3\n      at Object.<anonymous> (__tests__/avatarVisibility.property.test.tsx:60:1)\n\n  ● **Feature: casher-3-avatar-kiosk, Property 4: Connection persistence during navigation** › Property: avatar connection and display state persists when navigating from order to pay\n\n    thrown: \"Exceeded timeout of 5000 ms for a test.\n    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n\n      133 |   });\n      134 |\n    > 135 |   it(\"Property: avatar connection and display state persists when navigating from order to pay\", async () => {\n          |   ^\n      136 |     await fc.assert(\n      137 |         fc.asyncProperty(\n      138 |           fc.webUrl({ validSchemes: [\"http\", \"https\"] }),\n\n      at __tests__/avatarVisibility.property.test.tsx:135:3\n      at Object.<anonymous> (__tests__/avatarVisibility.property.test.tsx:129:1)\n","name":"/home/ysekiya/dev/yoshi_demo_assistants/apps/cashier-frontend/__tests__/avatarVisibility.property.test.tsx","startTime":1764900893115,"status":"failed","summary":""}],"wasInterrupted":false}
