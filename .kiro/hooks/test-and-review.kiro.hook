@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Test & Review",
+  "description": "Automatically runs npm tests when TypeScript files change, then analyzes test results and provides code review feedback including failure explanations and quality suggestions",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Find the project root by locating package.json (excluding node_modules), navigate to that directory, and run 'npm run test -- --json > test_results.json'. After the tests complete, analyze test_results.json along with recently changed TypeScript files in src/**/*.ts. If there are test failures, explain why they failed and provide fixed code suggestions. If all tests pass, provide a brief code review focusing on code quality, best practices, and potential improvements."
+  }
+}

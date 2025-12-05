@@ -61,6 +61,11 @@ class InMemoryKnowledgeSpaceRepository implements IKnowledgeSpaceRepository {
     return this.store.get(key) || null;
   }
 
+  async delete(tenantId: string, ksId: string): Promise<void> {
+    const key = `${tenantId}#${ksId}`;
+    this.store.delete(key);
+  }
+
   clear(): void {
     this.store.clear();
   }
@@ -77,6 +82,18 @@ class InMemoryAgentRepository implements IAgentRepository {
   async findByTenantAndId(tenantId: string, agentId: string): Promise<Agent | null> {
     const key = `${tenantId}#${agentId}`;
     return this.store.get(key) || null;
+  }
+
+  async update(agent: Agent): Promise<void> {
+    const key = `${agent.tenantId}#${agent.agentId}`;
+    if (this.store.has(key)) {
+      this.store.set(key, agent);
+    }
+  }
+
+  async delete(tenantId: string, agentId: string): Promise<void> {
+    const key = `${tenantId}#${agentId}`;
+    this.store.delete(key);
   }
 
   clear(): void {
@@ -130,6 +147,10 @@ class InMemoryVectorRepository implements IVectorRepository {
     return results
       .sort((a, b) => b.score - a.score)
       .slice(0, topK);
+  }
+
+  async deleteCollection(collectionName: string): Promise<void> {
+    this.store.delete(collectionName);
   }
 
   clear(): void {

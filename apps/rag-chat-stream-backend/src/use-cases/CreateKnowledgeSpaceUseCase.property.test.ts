@@ -37,7 +37,15 @@ describe('Property 1: KnowledgeSpace creation produces searchable chunks', () =>
         savedKnowledgeSpaces.push(ks);
       }),
       findByTenant: jest.fn(),
-      findByTenantAndId: jest.fn()
+      findByTenantAndId: jest.fn(),
+      delete: jest.fn(async (tenantId: string, ksId: string) => {
+        const index = savedKnowledgeSpaces.findIndex(
+          ks => ks.tenantId === tenantId && ks.knowledgeSpaceId === ksId
+        );
+        if (index !== -1) {
+          savedKnowledgeSpaces.splice(index, 1);
+        }
+      })
     };
 
     const vectorRepo: IVectorRepository = {
@@ -51,6 +59,9 @@ describe('Property 1: KnowledgeSpace creation produces searchable chunks', () =>
           chunk,
           score: 0.9
         }));
+      }),
+      deleteCollection: jest.fn(async (collectionName: string) => {
+        upsertedChunks.delete(collectionName);
       })
     };
 
