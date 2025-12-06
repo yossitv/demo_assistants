@@ -28,14 +28,14 @@ Shoppers want guidance without pressure. Human clerks can feel pushy; unmanned k
 
 ```mermaid
 flowchart LR
-  Sense[Detect customer]
-  Sense --> Wave[Wave & greet]
-  Wave --> Ice[Small talk / weather]
-  Ice --> Suggest[Contextual suggestion (e.g., hot pot when cold)]
-  Suggest --> ShowUI[Show products on kiosk]
-  ShowUI --> Select[Customer picks items]
-  Select --> Pay[Pay / confirm]
-  Pay --> Thanks[Close loop & invite back]
+  Sense["Detect customer"]
+  Sense --> Wave["Wave & greet"]
+  Wave --> Ice["Small talk / weather"]
+  Ice --> Suggest["Contextual suggestion (e.g., hot pot when cold)"]
+  Suggest --> ShowUI["Show products on kiosk"]
+  ShowUI --> Select["Customer picks items"]
+  Select --> Pay["Pay / confirm"]
+  Pay --> Thanks["Close loop & invite back"]
 ```
 
 ## How we built it
@@ -126,24 +126,24 @@ Tavus API → Avatar iframe stream (Daily)
 
 ```mermaid
 flowchart TD
-  U[User] --> FE[rag-chat-frontend (Next.js + SSE UI)]
-  FE -->|POST /v1/chat/completions (stream)| APIGW[API Gateway + Lambda]
-  subgraph Backend[rag-chat-stream-backend]
-    APIGW --> RAG[RAG: retrieve context -> OpenAI -> chunk SSE]
+  U["User"] --> FE["rag-chat-frontend (Next.js + SSE UI)"]
+  FE -->|POST /v1/chat/completions (stream)| APIGW["API Gateway + Lambda"]
+  subgraph Backend["rag-chat-stream-backend"]
+    APIGW --> RAG["RAG: retrieve context -> OpenAI -> chunk SSE"]
   end
-  RAG --> Qdrant[(Qdrant vectors)]
-  RAG --> Dynamo[(DynamoDB metadata)]
-  RAG --> OpenAI[OpenAI API]
+  RAG --> Qdrant["Qdrant vectors"]
+  RAG --> Dynamo["DynamoDB metadata"]
+  RAG --> OpenAI["OpenAI API"]
 ```
 
 ```mermaid
 flowchart TD
-  C[Customer] --> CF[cashier-frontend (Next.js kiosk)]
-  CF --> Cart[Cart + language state (localStorage)]
-  CF -->|start/end| API[/api/conversations (Next API routes)/]
-  API --> Ctx[Build conversational context from cart/products]
-  Ctx --> Tavus[Tavus API]
-  Tavus --> Iframe[Avatar iframe (Daily stream)]
+  C["Customer"] --> CF["cashier-frontend (Next.js kiosk)"]
+  CF --> Cart["Cart + language state (localStorage)"]
+  CF -->|start/end| API["/api/conversations (Next API routes)"]
+  API --> Ctx["Build conversational context from cart/products"]
+  Ctx --> Tavus["Tavus API"]
+  Tavus --> Iframe["Avatar iframe (Daily stream)"]
   CF <-->|events| Iframe
 ```
 
@@ -224,12 +224,12 @@ Upload a product Markdown file via `Knowledge → Create`, create an agent with 
 
 ```mermaid
 flowchart LR
-  Client[rag-chat-frontend] --> APIGW[API Gateway]
-  APIGW --> Lambda[Lambda: chat/knowledge/agent handlers]
-  Lambda --> Qdrant[(Qdrant vectors)]
-  Lambda --> Dynamo[(DynamoDB metadata)]
-  Lambda --> OpenAI[OpenAI API]
-  Lambda --> CW[CloudWatch Metrics/Alarms]
+  Client["rag-chat-frontend"] --> APIGW["API Gateway"]
+  APIGW --> Lambda["Lambda: chat/knowledge/agent handlers"]
+  Lambda --> Qdrant["Qdrant vectors"]
+  Lambda --> Dynamo["DynamoDB metadata"]
+  Lambda --> OpenAI["OpenAI API"]
+  Lambda --> CW["CloudWatch Metrics/Alarms"]
 ```
 
 ## Environment Variables (quick reference)
