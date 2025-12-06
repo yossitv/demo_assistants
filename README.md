@@ -127,7 +127,7 @@ Tavus API → Avatar iframe stream (Daily)
 ```mermaid
 flowchart TD
   U["User"] --> FE["rag-chat-frontend (Next.js + SSE UI)"]
-  FE -->|POST /v1/chat/completions (stream)| APIGW["API Gateway + Lambda"]
+  FE -->|"POST /v1/chat/completions (stream)"| APIGW["API Gateway + Lambda"]
   subgraph Backend["rag-chat-stream-backend"]
     APIGW --> RAG["RAG: retrieve context -> OpenAI -> chunk SSE"]
   end
@@ -140,7 +140,7 @@ flowchart TD
 flowchart TD
   C["Customer"] --> CF["cashier-frontend (Next.js kiosk)"]
   CF --> Cart["Cart + language state (localStorage)"]
-  CF -->|start/end| API["/api/conversations (Next API routes)"]
+  CF -->|"start/end"| API["/api/conversations (Next API routes)"]
   API --> Ctx["Build conversational context from cart/products"]
   Ctx --> Tavus["Tavus API"]
   Tavus --> Iframe["Avatar iframe (Daily stream)"]
